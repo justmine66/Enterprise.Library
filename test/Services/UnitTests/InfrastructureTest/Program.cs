@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Threading;
-using UnitTest.Infrastructure;
 
-namespace UnitTest
+namespace InfrastructureTest
 {
     class Program
     {

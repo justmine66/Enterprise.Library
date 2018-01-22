@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnitTest
+namespace BufferPoolTest
 {
     using Enterprise.Library.Common.Socketing.Buffering;
 
