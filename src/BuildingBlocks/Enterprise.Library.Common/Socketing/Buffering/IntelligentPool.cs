@@ -7,17 +7,125 @@ using System.Threading.Tasks;
 
 namespace Enterprise.Library.Common.Socketing.Buffering
 {
-    struct PoolItemState
+    /// <summary>
+    /// state of pool item
+    /// </summary>
+    public struct PoolItemState
     {
+        /// <summary>
+        /// the current generation to pool
+        /// </summary>
         public byte Generation { get; set; }
+    }
+
+    /// <summary>
+    /// intelligent pool supporting auto-expand
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class IntelligentPool<T> : IntelligentPoolBase<T>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IntelliPool{T}"/> class.
+        /// </summary>
+        /// <param name="initialCount">The initial count.</param>
+        /// <param name="itemCreator">The item creator.</param>
+        /// <param name="itemCleaner">The item cleaner.</param>
+        /// <param name="itemPreGet">The item pre get.</param>
+        public IntelligentPool(int initialCount,
+            IPoolItemCreator<T> itemCreator,
+            Action<T> itemCleaner = null,
+            Action<T> itemPreGet = null)
+            : base(initialCount, itemCreator, itemCleaner, itemPreGet)
+        {
+
+        }
+
+        private ConcurrentDictionary<T, PoolItemState> _bufferDict = new ConcurrentDictionary<T, PoolItemState>();
+        private ConcurrentDictionary<T, T> _removedItemDict;
+
+        /// <summary>
+        /// Determines whether the specified item can be returned.
+        /// </summary>
+        /// <param name="item">The item to be returned.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified item can be returned; otherwise, <c>false</c>.
+        /// </returns>
+        protected override bool CanReturn(T item)
+        {
+            return this._bufferDict.ContainsKey(item);
+        }
+
+        /// <summary>
+        /// Registers the new item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        protected override void RegisterNewItem(T item)
+        {
+            var state = new PoolItemState();
+            state.Generation = this.CurrentGeneration;
+            this._bufferDict.TryAdd(item, state);
+        }
+
+        /// <summary>
+        /// Tries to remove the specific item
+        /// </summary>
+        /// <param name="item">The specific item to be removed.</param>
+        /// <returns></returns>
+        protected override bool TryRemove(T item)
+        {
+            if (_removedItemDict == null || _removedItemDict.Count == 0)
+            {
+                return false;
+            }
+
+            return _removedItemDict.TryRemove(item, out T removedItem);
+        }
+
+        /// <summary>
+        /// Shrinks this instance.
+        /// </summary>
+        /// <returns></returns>
+        public override bool Shrink()
+        {
+            var generation = CurrentGeneration;
+            if (!base.Shrink())
+            {
+                return false;
+            }
+
+            var toBeRemoved = new List<T>(TotalCount / 2);
+
+            foreach (var item in _bufferDict)
+            {
+                if (item.Value.Generation == generation)
+                {
+                    toBeRemoved.Add(item.Key);
+                }
+            }
+
+            if (_removedItemDict == null)
+                _removedItemDict = new ConcurrentDictionary<T, T>();
+
+            foreach (var item in toBeRemoved)
+            {
+                if (_bufferDict.TryRemove(item, out PoolItemState state))
+                {
+                    _removedItemDict.TryAdd(item, item);
+                }
+            }
+
+            return true;
+        }
     }
 
     /// <summary>
     /// Intelligent pool base class
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class IntelliPoolBase<T> : IPool<T>
+    public abstract class IntelligentPoolBase<T> : IPool<T>
     {
+        #region [ Private fields and constructors ]
+
         private ConcurrentStack<T> _store;
         private IPoolItemCreator<T> _itemCreator;
         private byte _currentGeneration = 0;
@@ -35,8 +143,22 @@ namespace Enterprise.Library.Common.Socketing.Buffering
         /// <param name="itemCreator">The item creator.</param>
         /// <param name="itemCleaner">The item cleaner.</param>
         /// <param name="itemPreGet">The item pre get.</param>
-        public IntelliPoolBase(int initialCount, IPoolItemCreator<T> itemCreator, Action<T> itemCleaner = null, Action<T> itemPreGet = null)
+        public IntelligentPoolBase(
+            int initialCount,
+            IPoolItemCreator<T> itemCreator,
+            Action<T> itemCleaner = null,
+            Action<T> itemPreGet = null)
         {
+            if (initialCount <= 0)
+            {
+                throw new InvalidOperationException("initial Count of pool can not is zero.");
+            }
+
+            if (itemCreator == null)
+            {
+                throw new ArgumentNullException("itemCreator is not null.");
+            }
+
             this._itemCreator = itemCreator;
             this._itemCleaner = itemCleaner;
             this._itemPreGet = itemPreGet;
@@ -56,11 +178,9 @@ namespace Enterprise.Library.Common.Socketing.Buffering
             this.UpdateNextExpandThreshold();
         }
 
-        /// <summary>
-        /// Registers the new item.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        protected abstract void RegisterNewItem(T item);
+        #endregion
+
+        #region [ public properties ]
 
         /// <summary>
         /// Gets the current generation.
@@ -95,6 +215,16 @@ namespace Enterprise.Library.Common.Socketing.Buffering
             get { return _availableCount; }
         }
 
+        #endregion
+
+        #region [ public methods ]
+
+        /// <summary>
+        /// Registers the new item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        protected abstract void RegisterNewItem(T item);
+
         /// <summary>
         /// Gets an item from the pool.
         /// </summary>
@@ -104,7 +234,7 @@ namespace Enterprise.Library.Common.Socketing.Buffering
             if (this._store.TryPop(out T item))
             {
                 Interlocked.Decrement(ref this._availableCount);
-                
+
                 //require expand
                 if (this.AvailableCount <= this._nextExpandThreshold && this._inExpanding == 0)
                 {
@@ -120,14 +250,14 @@ namespace Enterprise.Library.Common.Socketing.Buffering
                 return item;
             }
 
-            //In expanding
+            //In expanding，lazy get...
             if (this._inExpanding == 1)
             {
                 var spinner = new SpinWait();
 
                 while (true)
                 {
-                    spinner.SpinOnce();
+                    spinner.SpinOnce();//short stop
 
                     if (_store.TryPop(out item))
                     {
@@ -148,19 +278,73 @@ namespace Enterprise.Library.Common.Socketing.Buffering
             else
             {
                 this.TryExpand();
-                this.Get();
+                return this.Get();
             }
         }
 
+        /// <summary>
+        /// Determines whether the specified item can be returned.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified item can be returned; otherwise, <c>false</c>.
+        /// </returns>
+        protected abstract bool CanReturn(T item);
+
+        /// <summary>
+        /// Tries to remove the specific item
+        /// </summary>
+        /// <param name="item">The specific item to be removed.</param>
+        /// <returns></returns>
+        protected abstract bool TryRemove(T item);
+
+        /// <summary>
+        /// Returns the specified item to the pool.
+        /// </summary>
+        /// <param name="item">the item.</param>
         public void Return(T item)
         {
-            throw new NotImplementedException();
+            var itemCleanner = this._itemCleaner;
+            if (itemCleanner != null)
+            {
+                itemCleanner(item);
+            }
+
+            if (this.CanReturn(item))
+            {
+                this._store.Push(item);
+                Interlocked.Increment(ref this._availableCount);
+                return;
+            }
+
+            if (this.TryRemove(item))
+            {
+                Interlocked.Decrement(ref this._totalCount);
+            }
         }
 
-        public bool Shrink()
+        /// <summary>
+        /// Shrinks this pool.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool Shrink()
         {
-            throw new NotImplementedException();
+            var generation = this._currentGeneration;
+            if (generation == 0)
+                return false;
+
+            var shrinThreshold = _totalCount * 3 / 4;
+
+            if (_availableCount <= shrinThreshold)
+                return false;
+
+            _currentGeneration = (byte)(generation - 1);
+            return true;
         }
+
+        #endregion
+
+        #region [ internal methods ]
 
         void UpdateNextExpandThreshold()
         {
@@ -192,5 +376,7 @@ namespace Enterprise.Library.Common.Socketing.Buffering
             this._totalCount += totalCount;
             this.UpdateNextExpandThreshold();
         }
+
+        #endregion
     }
 }
