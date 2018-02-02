@@ -12,11 +12,11 @@ using System.Threading;
 namespace Enterprise.Library.Common.Socketing
 {
     /// <summary>
-    /// represents a client-side socket
+    /// represents a client-side socket.
     /// </summary>
     public class ClientSocket
     {
-        #region Private Variables
+        #region [ private fields and constructors ]
 
         private readonly EndPoint _serverEndPoint;
         private readonly EndPoint _localEndPoint;
@@ -31,22 +31,11 @@ namespace Enterprise.Library.Common.Socketing
         private readonly int _flowControlThreshold;
         private long _flowControlTimes;
 
-        #endregion
-
-        public bool IsConnected
-        {
-            get { return _connection != null && _connection.IsConnected; }
-        }
-        public TcpConnection Connection
-        {
-            get { return _connection; }
-        }
-
         public ClientSocket(
-            EndPoint serverEndPoint, 
-            EndPoint localEndPoint, 
-            SocketSetting setting, 
-            IBufferPool receiveDataBufferPool, 
+            EndPoint serverEndPoint,
+            EndPoint localEndPoint,
+            SocketSetting setting,
+            IBufferPool receiveDataBufferPool,
             Action<ITcpConnection, byte[]> messageArrivedHandler)
         {
             Ensure.NotNull(serverEndPoint, "serverEndPoint");
@@ -67,6 +56,24 @@ namespace Enterprise.Library.Common.Socketing
             _flowControlThreshold = _setting.SendMessageFlowControlThreshold;
         }
 
+        #endregion
+
+        #region [ public properties and methods ]
+
+        /// <summary>
+        /// Get a value indicates whether a client socket is connected.
+        /// </summary>
+        public bool IsConnected
+        {
+            get { return _connection != null && _connection.IsConnected; }
+        }
+        /// <summary>
+        /// Get the tcp connection of client socket.
+        /// </summary>
+        public TcpConnection Connection
+        {
+            get { return _connection; }
+        }
         /// <summary>
         /// register a connection event listener
         /// </summary>
@@ -76,9 +83,8 @@ namespace Enterprise.Library.Common.Socketing
             _connectionEventListeners.Add(listener);
             return this;
         }
-
         /// <summary>
-        /// start a socket
+        /// starts a socket.
         /// </summary>
         /// <param name="waitMilliseconds"></param>
         /// <returns></returns>
@@ -105,12 +111,21 @@ namespace Enterprise.Library.Common.Socketing
 
             return this;
         }
+        /// <summary>
+        /// Enqueues an message to the sending queue.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public ClientSocket QueueMessage(byte[] message)
         {
             _connection.QueueMessage(message);
             FlowControlIfNecessary();
             return this;
         }
+        /// <summary>
+        ///  Closes the client socket and releases all associated resources.
+        /// </summary>
+        /// <returns></returns>
         public ClientSocket Shutdown()
         {
             if (_connection != null)
@@ -125,6 +140,10 @@ namespace Enterprise.Library.Common.Socketing
             }
             return this;
         }
+
+        #endregion
+
+        #region [ internal methods ]
 
         private void FlowControlIfNecessary()
         {
@@ -220,5 +239,7 @@ namespace Enterprise.Library.Common.Socketing
                 }
             }
         }
+
+        #endregion
     }
 }

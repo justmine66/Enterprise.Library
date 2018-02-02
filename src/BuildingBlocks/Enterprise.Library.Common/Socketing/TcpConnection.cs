@@ -9,28 +9,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enterprise.Library.Common.Socketing
 {
     /// <summary>
-    /// Represents a tcp connection interface.
+    /// represents a tcp connection
     /// </summary>
-    public interface ITcpConnection
-    {
-        Guid Id { get; }
-        bool IsConnected { get; }
-        EndPoint LocalEndPoint { get; }
-        EndPoint RemotingEndPoint { get; }
-        void QueueMessage(byte[] message);
-        void Close();
-    }
-
     public class TcpConnection : ITcpConnection
     {
-        #region Private Variables
+        #region [ private fields and constructors ]
 
         private readonly Guid _id;
         private Socket _socket;
@@ -55,46 +44,11 @@ namespace Enterprise.Library.Common.Socketing
 
         private long _pendingMessageCount = 0L;
 
-        #endregion
-
-        #region Public Properties
-
-        public Guid Id
-        {
-            get { return _id; }
-        }
-        public bool IsConnected
-        {
-            get { return _socket != null && _socket.Connected; }
-        }
-        public Socket Socket
-        {
-            get { return _socket; }
-        }
-        public EndPoint LocalEndPoint
-        {
-            get { return _localEndPoint; }
-        }
-        public EndPoint RemotingEndPoint
-        {
-            get { return _remotingEndPoint; }
-        }
-        public SocketSetting Setting
-        {
-            get { return _setting; }
-        }
-        public long PendingMessageCount
-        {
-            get { return _pendingMessageCount; }
-        }
-
-        #endregion
-
         public TcpConnection(
-            Socket socket, 
-            SocketSetting setting, 
-            IBufferPool receiveDataBufferPool, 
-            Action<ITcpConnection, byte[]> messageArrivedHandler, 
+            Socket socket,
+            SocketSetting setting,
+            IBufferPool receiveDataBufferPool,
+            Action<ITcpConnection, byte[]> messageArrivedHandler,
             Action<ITcpConnection, SocketError> connectionClosedHandler)
         {
             Ensure.NotNull(socket, "socket");
@@ -129,6 +83,47 @@ namespace Enterprise.Library.Common.Socketing
             TrySend();
         }
 
+        #endregion
+
+        #region [ public properties ]
+
+        public Guid Id
+        {
+            get { return _id; }
+        }
+        public bool IsConnected
+        {
+            get { return _socket != null && _socket.Connected; }
+        }
+        public Socket Socket
+        {
+            get { return _socket; }
+        }
+        public EndPoint LocalEndPoint
+        {
+            get { return _localEndPoint; }
+        }
+        public EndPoint RemotingEndPoint
+        {
+            get { return _remotingEndPoint; }
+        }
+        public SocketSetting Setting
+        {
+            get { return _setting; }
+        }
+        public long PendingMessageCount
+        {
+            get { return _pendingMessageCount; }
+        }
+
+        #endregion
+
+        #region [ public methods ]
+
+        /// <summary>
+        /// Enqueues an message to the sending queue.
+        /// </summary>
+        /// <param name="message"></param>
         public void QueueMessage(byte[] message)
         {
             if (message.Length == 0)
@@ -142,17 +137,25 @@ namespace Enterprise.Library.Common.Socketing
 
             TrySend();
         }
+
+        /// <summary>
+        ///  Closes tcp connection and releases all associated resources.
+        /// </summary>
         public void Close()
         {
             CloseInternal(SocketError.Success, "Socket normal close.", null);
         }
 
-        #region Send Methods
+        #endregion
+
+        #region [ internal methods ]
+
+        #region [ Send Methods ]
 
         private void TrySend()
         {
             if (_closing == 1) return;
-            if (!EnterSending()) return;
+            if (!TryEnterSending()) return;
 
             _sendingStream.SetLength(0);
 
@@ -214,7 +217,7 @@ namespace Enterprise.Library.Common.Socketing
                 CloseInternal(socketArgs.SocketError, "Socket send error.", null);
             }
         }
-        private bool EnterSending()
+        private bool TryEnterSending()
         {
             return Interlocked.CompareExchange(ref _sending, 1, 0) == 0;
         }
@@ -225,11 +228,11 @@ namespace Enterprise.Library.Common.Socketing
 
         #endregion
 
-        #region Receive Methods
+        #region [ Receive Methods ]
 
         private void TryReceive()
         {
-            if (!EnterReceiving()) return;
+            if (!TryEnterReceiving()) return;
 
             var buffer = _receiveDataBufferPool.Get();
             if (buffer == null)
@@ -293,7 +296,7 @@ namespace Enterprise.Library.Common.Socketing
         }
         private void TryParsingReceivedData(ConcurrentQueue<ReceivedData> receiveQueue)
         {
-            if (!EnterParsing()) return;
+            if (!TryEnterParsing()) return;
 
             try
             {
@@ -333,7 +336,7 @@ namespace Enterprise.Library.Common.Socketing
                 _logger.Error("Call message arrived handler failed.", ex);
             }
         }
-        private bool EnterReceiving()
+        private bool TryEnterReceiving()
         {
             return Interlocked.CompareExchange(ref _receiving, 1, 0) == 0;
         }
@@ -341,7 +344,7 @@ namespace Enterprise.Library.Common.Socketing
         {
             Interlocked.Exchange(ref _receiving, 0);
         }
-        private bool EnterParsing()
+        private bool TryEnterParsing()
         {
             return Interlocked.CompareExchange(ref _parsing, 1, 0) == 0;
         }
@@ -349,7 +352,6 @@ namespace Enterprise.Library.Common.Socketing
         {
             Interlocked.Exchange(ref _parsing, 0);
         }
-
         struct ReceivedData
         {
             public readonly ArraySegment<byte> Buffer;
@@ -417,5 +419,7 @@ namespace Enterprise.Library.Common.Socketing
                 }
             }
         }
+
+        #endregion
     }
 }

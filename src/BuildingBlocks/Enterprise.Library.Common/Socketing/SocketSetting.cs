@@ -5,7 +5,7 @@ using System.Text;
 namespace Enterprise.Library.Common.Socketing
 {
     /// <summary>
-    /// socket setting
+    /// socket options
     /// </summary>
     public class SocketSetting
     {
@@ -23,7 +23,7 @@ namespace Enterprise.Library.Common.Socketing
         /// </summary>
         public int MaxSendPacketSize = 1024 * 64;
         /// <summary>
-        /// the Threshold of send message flow control of socket. default 1000.
+        /// the threshold of send message flow control of socket. default 1000.
         /// </summary>
         public int SendMessageFlowControlThreshold = 1000;
 

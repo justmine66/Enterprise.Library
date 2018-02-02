@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Enterprise.Library.Common.Socketing
@@ -18,7 +17,7 @@ namespace Enterprise.Library.Common.Socketing
     /// </summary>
     public class ServerSocket
     {
-        #region Private Variables
+        #region [ private fields and constructors ]
 
         private readonly Socket _socket;
         private readonly SocketSetting _setting;
@@ -30,12 +29,10 @@ namespace Enterprise.Library.Common.Socketing
         private readonly ConcurrentDictionary<Guid, ITcpConnection> _connectionDict;
         private readonly ILogger _logger;
 
-        #endregion
-
         public ServerSocket(
-            IPEndPoint listeningEndPoint, 
-            SocketSetting setting, 
-            IBufferPool receiveDataBufferPool, 
+            IPEndPoint listeningEndPoint,
+            SocketSetting setting,
+            IBufferPool receiveDataBufferPool,
             Action<ITcpConnection, byte[], Action<byte[]>> messageArrivedHandler)
         {
             Ensure.NotNull(listeningEndPoint, "listeningEndPoint");
@@ -55,6 +52,10 @@ namespace Enterprise.Library.Common.Socketing
             _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(GetType().FullName);
         }
 
+        #endregion
+
+        #region [ public methods ]
+
         /// <summary>
         /// register a connection event listener
         /// </summary>
@@ -63,7 +64,6 @@ namespace Enterprise.Library.Common.Socketing
         {
             _connectionEventListeners.Add(listener);
         }
-        
         /// <summary>
         /// start a socket listening tcp endpoint
         /// </summary>
@@ -109,6 +109,10 @@ namespace Enterprise.Library.Common.Socketing
         {
             return _connectionDict.Values.ToList();
         }
+
+        #endregion
+
+        #region [ internal methods ]
 
         private void StartAccepting()
         {
@@ -166,10 +170,10 @@ namespace Enterprise.Library.Common.Socketing
                 try
                 {
                     var connection = new TcpConnection(
-                        socket, 
-                        _setting, 
-                        _receiveDataBufferPool, 
-                        OnMessageArrived, 
+                        socket,
+                        _setting,
+                        _receiveDataBufferPool,
+                        OnMessageArrived,
                         OnConnectionClosed);
 
                     if (_connectionDict.TryAdd(connection.Id, connection))
@@ -229,5 +233,7 @@ namespace Enterprise.Library.Common.Socketing
                 }
             }
         }
+
+        #endregion
     }
 }

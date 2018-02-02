@@ -10,6 +10,7 @@ namespace InfrastructureTest
             //TwoPhraseWaitOfSpinWaitImplTest.DirectMain();
             //BufferPoolTest.Get_item_of_buffer_pool();
             //BufferPoolTest.Expanding_buffer_pool();
+            //TCSTest.MainInternal();
 
             Console.Read();
         }
