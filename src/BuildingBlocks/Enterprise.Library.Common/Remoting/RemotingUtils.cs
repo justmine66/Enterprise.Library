@@ -67,5 +67,10 @@ namespace Enterprise.Library.Common.Remoting
 
             return ByteConverter.Combine(bytesList.ToArray());
         }
+
+        public static IDictionary<string, string> ToHeader()
+        {
+            return null;
+        }
     }
 }
