@@ -385,7 +385,7 @@ namespace Enterprise.Library.Common.Remoting
         }
         private void StopReconnectServerTask()
         {
-            _scheduleService.StopTask(string.Format("{0}.ReconnectServer", this.GetType().FullName));
+            _scheduleService.StopTask(string.Format("{0}.ReconnectServer", this.GetType().Name));
         }
         private void EnsureClientStatus()
         {
@@ -410,15 +410,23 @@ namespace Enterprise.Library.Common.Remoting
             public void OnConnectionAccepted(ITcpConnection connection) { }
             public void OnConnectionEstablished(ITcpConnection connection)
             {
-                throw new NotImplementedException();
+                _remotingClient.StopReconnectServerTask();
+                _remotingClient.ExitReconnecting();
+                _remotingClient.SetLocalEndPoint(connection.LocalEndPoint);
             }
             public void OnConnectionClosed(ITcpConnection connection, SocketError socketError)
             {
-                throw new NotImplementedException();
+                if (_remotingClient._shutteddown) return;
+
+                _remotingClient.ExitReconnecting();
+                _remotingClient.StartReconnectServerTask();
             }
             public void OnConnectionFailed(EndPoint remotingEndPoint, SocketError socketError)
             {
-                throw new NotImplementedException();
+                if (_remotingClient._shutteddown) return;
+
+                _remotingClient.ExitReconnecting();
+                _remotingClient.StartReconnectServerTask();
             }
         }
 

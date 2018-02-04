@@ -37,7 +37,7 @@ namespace ClientSideSocketTest
             var serverAddress = string.IsNullOrEmpty(serverIP)
                                 ? IPAddress.Loopback
                                 : IPAddress.Parse(serverIP);
-            _client = new SocketRemotingClient(new IPEndPoint(serverAddress, 5001)).Start();
+            _client = new SocketRemotingClient(new IPEndPoint(serverAddress, 5000)).Start();
             _client.RegisterRemotingServerMessageHandler(100, new RemotingServerMessageHandler());
         }
 
