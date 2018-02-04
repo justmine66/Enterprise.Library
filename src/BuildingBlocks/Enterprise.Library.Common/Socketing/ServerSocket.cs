@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Enterprise.Library.Common.Socketing
 {
     /// <summary>
-    /// represents a server-side socket
+    /// Represents a server-side socket
     /// </summary>
     public class ServerSocket
     {
@@ -65,7 +65,7 @@ namespace Enterprise.Library.Common.Socketing
             _connectionEventListeners.Add(listener);
         }
         /// <summary>
-        /// start a socket listening tcp endpoint
+        /// Starts a server-side socket.
         /// </summary>
         public void Start()
         {
@@ -85,11 +85,18 @@ namespace Enterprise.Library.Common.Socketing
 
             StartAccepting();
         }
+        /// <summary>
+        /// Shutdown a server-side socket and releases all resources.
+        /// </summary>
         public void Shutdown()
         {
             SocketUtils.ShutdownSocket(_socket);
             _logger.InfoFormat("Socket server shutdown, listening TCP endpoint: {0}.", _listeningEndPoint);
         }
+        /// <summary>
+        /// Pushes remoting message to all client-side tcp connections.
+        /// </summary>
+        /// <param name="message">the remoting message as the array of byte.</param>
         public void PushMessageToAllConnections(byte[] message)
         {
             foreach (var connection in _connectionDict.Values)
@@ -97,6 +104,11 @@ namespace Enterprise.Library.Common.Socketing
                 connection.QueueMessage(message);
             }
         }
+        /// <summary>
+        /// Pushes remoting message to a specified client-side tcp connection.
+        /// </summary>
+        /// <param name="connectionId">the identifier of connection.</param>
+        /// <param name="message">the remoting message as the array of byte.</param>
         public void PushMessageToConnection(Guid connectionId, byte[] message)
         {
             ITcpConnection connection;
@@ -105,6 +117,10 @@ namespace Enterprise.Library.Common.Socketing
                 connection.QueueMessage(message);
             }
         }
+        /// <summary>
+        /// Returns all client-side tcp connections which are pended the server-side socket.
+        /// </summary>
+        /// <returns></returns>
         public IList<ITcpConnection> GetAllConnections()
         {
             return _connectionDict.Values.ToList();

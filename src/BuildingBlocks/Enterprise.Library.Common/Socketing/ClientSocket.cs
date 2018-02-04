@@ -12,7 +12,7 @@ using System.Threading;
 namespace Enterprise.Library.Common.Socketing
 {
     /// <summary>
-    /// represents a client-side socket.
+    /// Represents a client-side socket.
     /// </summary>
     public class ClientSocket
     {

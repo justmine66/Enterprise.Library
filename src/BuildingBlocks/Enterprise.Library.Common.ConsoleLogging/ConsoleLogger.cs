@@ -15,77 +15,77 @@ namespace Enterprise.Library.Common.ConsoleLogging
 
         public void Debug(object message)
         {
-            ConsoleOutput.DebugFormat(message + string.Empty);
+            ConsoleOutputUtils.DebugFormat(message + string.Empty);
         }
 
         public void Debug(object message, Exception exception)
         {
-            ConsoleOutput.DebugFormat("{0}, exception: {1}", message, exception.ToString());
+            ConsoleOutputUtils.DebugFormat("{0}, exception: {1}", message, exception.ToString());
         }
 
         public void DebugFormat(string format, params object[] args)
         {
-            ConsoleOutput.DebugFormat(format, args);
+            ConsoleOutputUtils.DebugFormat(format, args);
         }
 
         public void Info(object message)
         {
-            ConsoleOutput.InfoFormat(message + string.Empty);
+            ConsoleOutputUtils.InfoFormat(message + string.Empty);
         }
 
         public void Info(object message, Exception exception)
         {
-            ConsoleOutput.InfoFormat("{0}, exception: {1}", message, exception.ToString());
+            ConsoleOutputUtils.InfoFormat("{0}, exception: {1}", message, exception.ToString());
         }
 
         public void InfoFormat(string format, params object[] args)
         {
-            ConsoleOutput.InfoFormat(format, args);
+            ConsoleOutputUtils.InfoFormat(format, args);
         }
 
         public void Warn(object message)
         {
-            ConsoleOutput.WarnFormat(message + string.Empty);
+            ConsoleOutputUtils.WarnFormat(message + string.Empty);
         }
 
         public void Warn(object message, Exception exception)
         {
-            ConsoleOutput.WarnFormat("{0}, exception: {1}", message, exception.ToString());
+            ConsoleOutputUtils.WarnFormat("{0}, exception: {1}", message, exception.ToString());
         }
 
         public void WarnFormat(string format, params object[] args)
         {
-            ConsoleOutput.WarnFormat(format, args);
+            ConsoleOutputUtils.WarnFormat(format, args);
         }
 
         public void Error(object message)
         {
-            ConsoleOutput.ErrorFormat(message + string.Empty);
+            ConsoleOutputUtils.ErrorFormat(message + string.Empty);
         }
 
         public void Error(object message, Exception exception)
         {
-            ConsoleOutput.ErrorFormat("{0}, exception: {1}", message, exception.ToString());
+            ConsoleOutputUtils.ErrorFormat("{0}, exception: {1}", message, exception.ToString());
         }
 
         public void ErrorFormat(string format, params object[] args)
         {
-            ConsoleOutput.ErrorFormat(format, args);
+            ConsoleOutputUtils.ErrorFormat(format, args);
         }
 
         public void Fatal(object message)
         {
-            ConsoleOutput.FatalFormat(message + string.Empty);
+            ConsoleOutputUtils.FatalFormat(message + string.Empty);
         }
 
         public void Fatal(object message, Exception exception)
         {
-            ConsoleOutput.FatalFormat("{0}, exception: {1}", message, exception.ToString());
+            ConsoleOutputUtils.FatalFormat("{0}, exception: {1}", message, exception.ToString());
         }
 
         public void FatalFormat(string format, params object[] args)
         {
-            ConsoleOutput.FatalFormat(format, args);
+            ConsoleOutputUtils.FatalFormat(format, args);
         }
     }
 }
