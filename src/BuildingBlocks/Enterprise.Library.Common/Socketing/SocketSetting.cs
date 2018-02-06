@@ -10,11 +10,11 @@ namespace Enterprise.Library.Common.Socketing
     public class SocketSetting
     {
         /// <summary>
-        /// the size of send buffer of socket. default 64kb.
+        /// the send buffer size to use for each socket I/O operation. default 64kb.
         /// </summary>
         public int SendBufferSize = 1024 * 64;
         /// <summary>
-        /// the size of receive buffer of socket. default 64kb.
+        /// the receive buffer size to use for each socket I/O operation. default 64kb.
         /// </summary>
         public int ReceiveBufferSize = 1024 * 64;
 

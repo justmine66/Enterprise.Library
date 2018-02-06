@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Enterprise.Library.Common.Socketing
 {
     /// <summary>
-    /// Represents a server-side socket
+    /// Represents a server-side socket.
     /// </summary>
     public class ServerSocket
     {
@@ -57,7 +57,7 @@ namespace Enterprise.Library.Common.Socketing
         #region [ public methods ]
 
         /// <summary>
-        /// register a connection event listener
+        /// Registers a connection event listener.
         /// </summary>
         /// <param name="listener"></param>
         public void RegisterConnectionEventListener(IConnectionEventListener listener)
@@ -65,7 +65,7 @@ namespace Enterprise.Library.Common.Socketing
             _connectionEventListeners.Add(listener);
         }
         /// <summary>
-        /// Starts a server-side socket.
+        /// Starts a server-side socket such that it is listening for incoming connection requests.
         /// </summary>
         public void Start()
         {
@@ -149,6 +149,8 @@ namespace Enterprise.Library.Common.Socketing
                 Task.Factory.StartNew(() => StartAccepting());
             }
         }
+        // This method is the callback method associated with Socket.AcceptAsync 
+        // operations and is invoked when an accept operation is complete
         private void AcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
             ProcessAccept(e);
@@ -176,6 +178,7 @@ namespace Enterprise.Library.Common.Socketing
             }
             finally
             {
+                // Accept the next connection request
                 StartAccepting();
             }
         }

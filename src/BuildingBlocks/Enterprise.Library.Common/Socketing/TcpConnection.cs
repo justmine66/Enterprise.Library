@@ -244,6 +244,7 @@ namespace Enterprise.Library.Common.Socketing
 
             try
             {
+                //assign a byte buffer from the buffer pool to the SocketAsyncEventArg object.
                 _receiveSocketArgs.SetBuffer(buffer, 0, buffer.Length);
                 if (_receiveSocketArgs.Buffer == null)
                 {
@@ -270,6 +271,7 @@ namespace Enterprise.Library.Common.Socketing
         }
         private void ProcessReceive(SocketAsyncEventArgs socketArgs)
         {
+            // check if the remote host closed the connection.
             if (socketArgs.BytesTransferred == 0 || socketArgs.SocketError != SocketError.Success)
             {
                 CloseInternal(socketArgs.SocketError, socketArgs.SocketError != SocketError.Success ? "Socket receive error" : "Socket normal close", null);

@@ -13,7 +13,7 @@ namespace Enterprise.Library.Common.Socketing.Buffering
     public struct PoolItemState
     {
         /// <summary>
-        /// the current generation to pool
+        /// the current generation to pool.
         /// </summary>
         public byte Generation { get; set; }
     }

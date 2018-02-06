@@ -22,10 +22,10 @@ namespace Enterprise.Library.Common.Socketing
         }
 
         /// <summary>
-        /// create socket 
+        /// Creates socket. 
         /// </summary>
-        /// <param name="sendBufferSize">the size of the send buffer of the socket</param>
-        /// <param name="receiveBufferSize">the size of the receive buffer of the socket</param>
+        /// <param name="sendBufferSize">the size of the send buffer of the socket.</param>
+        /// <param name="receiveBufferSize">the size of the receive buffer of the socket.</param>
         /// <returns></returns>
         public static Socket CreateSocket(int sendBufferSize, int receiveBufferSize)
         {
