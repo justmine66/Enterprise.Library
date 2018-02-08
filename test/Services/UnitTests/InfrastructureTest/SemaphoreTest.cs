@@ -7,7 +7,7 @@ namespace InfrastructureTest
 {
     public class SemaphoreTest
     {
-        static Semaphore sema = new Semaphore(5, 5);
+        static Semaphore sema = new Semaphore(9, 9);
         const int cycleNum = 9;
         public static void Test()
         {

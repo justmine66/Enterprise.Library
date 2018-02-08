@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InfrastructureTest.Socketing;
+using System;
 
 namespace InfrastructureTest
 {
@@ -16,7 +17,8 @@ namespace InfrastructureTest
             //CancellationTokenSourceTest.Test2();
             //CancellationTokenSourceTest.Test3();
             //TimerTest.Test();
-            SemaphoreTest.Test();
+            //SemaphoreTest.Test();
+            SocketingTest.Test();
         }
     }
 }
