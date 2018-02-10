@@ -3,6 +3,7 @@ using Enterprise.Library.Common.Components;
 using Enterprise.Library.Common.ConsoleLogging;
 using Enterprise.Library.Common.Logging;
 using Enterprise.Library.Common.Remoting;
+using Enterprise.Library.Common.Socketing;
 using System;
 using System.Configuration;
 using System.Text;
@@ -28,7 +29,7 @@ namespace ServerSideSocketTest
                 .BuildContainer();
 
             _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(Program).Name);
-            _remotingServer = new SocketRemotingServer().Start();
+            _remotingServer = new SocketRemotingServer(new SocketSetting() {   }).Start();
             PushTestMessageToAllClients();
             Console.Read();
         }

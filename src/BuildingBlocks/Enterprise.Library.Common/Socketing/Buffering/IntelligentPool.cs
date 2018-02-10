@@ -19,7 +19,7 @@ namespace Enterprise.Library.Common.Socketing.Buffering
     }
 
     /// <summary>
-    /// intelligent pool supporting auto-expand
+    /// The intelligent pool supporting auto-expand.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class IntelligentPool<T> : IntelligentPoolBase<T>

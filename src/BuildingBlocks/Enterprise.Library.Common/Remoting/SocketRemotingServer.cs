@@ -26,13 +26,16 @@ namespace Enterprise.Library.Common.Remoting
         public SocketRemotingServer()
             : this("server", new IPEndPoint(IPAddress.Loopback, 5000))
         { }
+        public SocketRemotingServer(SocketSetting setting)
+            : this("server", new IPEndPoint(IPAddress.Loopback, 5000), setting)
+        { }
         public SocketRemotingServer(
             string name,
             IPEndPoint listeningEndPoint,
             SocketSetting setting = null)
         {
             _setting = setting ?? new SocketSetting();
-            _receiveDataBufferPool = _receiveDataBufferPool = new BufferPool(_setting.ReceiveDataBufferSize, _setting.ReceiveDataBufferPoolSize);
+            _receiveDataBufferPool = new BufferPool(_setting.ReceiveDataBufferSize, _setting.ReceiveDataBufferPoolSize);
             _serverSocket = new ServerSocket(listeningEndPoint, _setting, _receiveDataBufferPool, HandleRemotingRequest);
             _requestHandlerDict = new Dictionary<int, IRequestHandler>();
             _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(name ?? GetType().Name);

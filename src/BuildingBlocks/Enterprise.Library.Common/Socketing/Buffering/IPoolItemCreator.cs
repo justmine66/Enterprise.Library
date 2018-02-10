@@ -5,7 +5,7 @@ using System.Text;
 namespace Enterprise.Library.Common.Socketing.Buffering
 {
     /// <summary>
-    /// The pool item creator interface
+    /// The pool item creator interface.
     /// </summary>
     public interface IPoolItemCreator<out T>
     {

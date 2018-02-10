@@ -19,7 +19,7 @@ namespace Enterprise.Library.Common.Socketing
         public int ReceiveBufferSize = 1024 * 64;
 
         /// <summary>
-        /// the max size of Send Packet of socket. default 64kb.
+        /// the max size of send packet of socket. default 64kb.
         /// </summary>
         public int MaxSendPacketSize = 1024 * 64;
         /// <summary>
@@ -41,7 +41,7 @@ namespace Enterprise.Library.Common.Socketing
         /// </summary>
         public int ReceiveDataBufferSize = 1024 * 64;
         /// <summary>
-        /// the size of buffer pool of receive data. default 50 size.
+        /// the size of buffer pool of receive data. default 50 count.
         /// </summary>
         public int ReceiveDataBufferPoolSize = 50;
     }

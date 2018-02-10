@@ -11,9 +11,9 @@ namespace InfrastructureTest
         {
             var timer = new Timer(self =>
             {
-                ((Timer)self).Dispose();
+                
             });
-            timer.Change(0, Timeout.Infinite);
+            timer.Change(0, 3000);
 
             Console.Read();
         }

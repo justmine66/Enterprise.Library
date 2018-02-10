@@ -10,14 +10,14 @@ namespace InfrastructureTest.Socketing
         int _maximumBytes;
         byte[] _buffer;
         Stack<int> _freeIndexPool;
-        int _currentIndex;
-        int _bufferSize;
+        int _currentIndex;//offset
+        int _unitBufferSize;
 
-        public BufferManager(int totalBytes, int bufferSize)
+        public BufferManager(int totalBytes, int unitBufferSize)
         {
             _maximumBytes = totalBytes;
             _currentIndex = 0;
-            _bufferSize = bufferSize;
+            _unitBufferSize = unitBufferSize;
             _freeIndexPool = new Stack<int>();
         }
 
@@ -30,17 +30,17 @@ namespace InfrastructureTest.Socketing
         {
             if (_freeIndexPool.Count > 0)
             {
-                args.SetBuffer(_buffer, _freeIndexPool.Pop(), _bufferSize);
+                args.SetBuffer(_buffer, _freeIndexPool.Pop(), _unitBufferSize);
             }
             else
             {
-                if ((_maximumBytes - _bufferSize) < _currentIndex)
+                if ((_maximumBytes - _unitBufferSize) < _currentIndex)
                 {
                     return false;
                 }
 
-                args.SetBuffer(_buffer, _currentIndex, _bufferSize);
-                _currentIndex += _bufferSize;
+                args.SetBuffer(_buffer, _currentIndex, _unitBufferSize);
+                _currentIndex += _unitBufferSize;
             }
 
             return true;
