@@ -10,6 +10,9 @@ namespace Enterprise.Library.Common.Socketing
     /// </summary>
     public interface ITcpConnection
     {
+        /// <summary>
+        /// The indentifier.
+        /// </summary>
         Guid Id { get; }
         bool IsConnected { get; }
         EndPoint LocalEndPoint { get; }

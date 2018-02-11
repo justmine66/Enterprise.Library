@@ -274,7 +274,7 @@ namespace Enterprise.Library.Common.Socketing
             // check if the remote host closed the connection.
             if (socketArgs.BytesTransferred == 0 || socketArgs.SocketError != SocketError.Success)
             {
-                CloseInternal(socketArgs.SocketError, socketArgs.SocketError != SocketError.Success ? "Socket receive error" : "Socket normal close", null);
+                CloseInternal(socketArgs.SocketError, socketArgs.SocketError != SocketError.Success ? "Socket receive error" : "Client socket had normally closed", null);
                 return;
             }
 

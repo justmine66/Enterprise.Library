@@ -29,7 +29,7 @@ namespace ServerSideSocketTest
                 .BuildContainer();
 
             _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(Program).Name);
-            _remotingServer = new SocketRemotingServer(new SocketSetting() {   }).Start();
+            _remotingServer = new SocketRemotingServer().Start();
             PushTestMessageToAllClients();
             Console.Read();
         }

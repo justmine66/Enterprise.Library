@@ -16,10 +16,11 @@ namespace InfrastructureTest
             //CancellationTokenSourceTest.Test1();
             //CancellationTokenSourceTest.Test2();
             //CancellationTokenSourceTest.Test3();
-            TimerTest.Test();
+            //TimerTest.Test();
             //SemaphoreTest.Test();
             //SocketingTest.Test();
             //Base64UrlTextEncoderTest.Test();
+            //MessageLenghtTest.Test();
         }
     }
 }

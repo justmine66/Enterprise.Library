@@ -18,7 +18,7 @@ namespace Enterprise.Library.Common.Socketing.Framing
 
         private byte[] _messageBuffer;
         private int _bufferIndex = 0;
-        private int _headerBytes = 0;
+        private int _headerBytes = 0; 
         private int _packageLength = 0;
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Enterprise.Library.Common.Socketing.Framing
         /// <returns></returns>
         public IEnumerable<ArraySegment<byte>> FrameData(ArraySegment<byte> data)
         {
-            var length = data.Count;
+            int length = data.Count;
             yield return new ArraySegment<byte>(new[] {
                 (byte)length,
                 (byte)(length >> 8),
