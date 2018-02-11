@@ -27,7 +27,8 @@ namespace InfrastructureTest
             {
                 if (numHeaderBytes < headLength)
                 {
-                    packageLength |= lengthBytes[i] << (numHeaderBytes * 8);
+                    int unit = lengthBytes[i] << (numHeaderBytes * 8);
+                    packageLength |= unit;
                     ++numHeaderBytes;
 
                     if (numHeaderBytes == headLength)

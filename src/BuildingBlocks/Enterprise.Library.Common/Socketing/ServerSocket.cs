@@ -178,7 +178,7 @@ namespace Enterprise.Library.Common.Socketing
             }
             finally
             {
-                // Accept the next connection request
+                // Accept the next connection request.
                 StartAccepting();
             }
         }

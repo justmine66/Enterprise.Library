@@ -21,6 +21,8 @@ namespace InfrastructureTest
             //SocketingTest.Test();
             //Base64UrlTextEncoderTest.Test();
             //MessageLenghtTest.Test();
+
+            Console.Read();
         }
     }
 }

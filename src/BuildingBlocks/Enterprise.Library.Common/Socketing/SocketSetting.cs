@@ -19,20 +19,20 @@ namespace Enterprise.Library.Common.Socketing
         public int ReceiveBufferSize = 1024 * 64;
 
         /// <summary>
-        /// the max size of send packet of socket. default 64kb.
+        /// the max size of send packet of server-side socket. default 64kb.
         /// </summary>
         public int MaxSendPacketSize = 1024 * 64;
         /// <summary>
-        /// the threshold of send message flow control of socket. default 1000.
+        /// the threshold of send message flow control of client-side socket. default 1000.
         /// </summary>
         public int SendMessageFlowControlThreshold = 1000;
 
         /// <summary>
-        /// the interval reconnecting the server.default 1 second.
+        /// the interval reconnecting the server of client-side socket.default 1 second.
         /// </summary>
         public int ReconnectToServerInterval = 1000;
         /// <summary>
-        /// the interval scanning request timeout .default 1 second.
+        /// the interval scanning request timeout of client-side socket.default 1 second.
         /// </summary>
         public int ScanTimeoutRequestInterval = 1000;
 
