@@ -8,14 +8,20 @@ using System.Threading;
 namespace Enterprise.Library.Common.Remoting
 {
     /// <summary>
-    /// represent a remote request
+    /// Represents a remote request.
     /// </summary>
     public class RemotingRequest
     {
         private static long _sequence;
         public string Id { get; set; }
         public short Type { get; set; }
+        /// <summary>
+        /// The identifier of request handler.
+        /// </summary>
         public short Code { get; set; }
+        /// <summary>
+        /// The identifier of response future of request.
+        /// </summary>
         public long Sequence { get; set; }
         public byte[] Body { get; set; }
         public DateTime CreatedTime { get; set; }
@@ -72,12 +78,21 @@ namespace Enterprise.Library.Common.Remoting
     }
 
     /// <summary>
-    /// represent a remote request type
+    /// Represents a remote request type
     /// </summary>
     public class RemotingRequestType
     {
+        /// <summary>
+        /// The server-side socket not only receives messages but also responses messages.
+        /// </summary>
         public const short Async = 1;
+        /// <summary>
+        /// The server-side socket only receives messages.
+        /// </summary>
         public const short Oneway = 2;
+        /// <summary>
+        /// The server-side socket not only receives messages but also responses messages.
+        /// </summary>
         public const short Callback = 3;
     }
 }

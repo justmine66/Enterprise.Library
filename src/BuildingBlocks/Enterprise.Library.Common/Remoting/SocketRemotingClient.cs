@@ -50,7 +50,7 @@ namespace Enterprise.Library.Common.Remoting
             _localEndPoint = localEndPoint;
             _setting = setting ?? new SocketSetting();
             _receivedDataBufferPool = new BufferPool(_setting.ReceiveDataBufferSize, _setting.ReceiveDataBufferPoolSize);
-            _clientSocket = new ClientSocket(_serverEndPoint, _localEndPoint, _setting, _receivedDataBufferPool, HandleServerMessage);
+            _clientSocket = new ClientSocket(_serverEndPoint, _localEndPoint, _setting, _receivedDataBufferPool, this.HandleServerMessage);
             _responseFutureDict = new ConcurrentDictionary<long, ResponseFuture>();
             _replyMessageQueue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
             _responseHandlerDict = new Dictionary<int, IResponseHandler>();
@@ -102,7 +102,7 @@ namespace Enterprise.Library.Common.Remoting
             get { return _receivedDataBufferPool; }
         }
         /// <summary>
-        /// Add an the implementer of IConnectionEventListener to the client-side socket.
+        /// Adds an the implementer of IConnectionEventListener to the client-side socket.
         /// </summary>
         /// <param name="listener">the implementer of IConnectionEventListener.</param>
         /// <returns>the client-side socket.</returns>
@@ -113,9 +113,10 @@ namespace Enterprise.Library.Common.Remoting
             return this;
         }
         /// <summary>
-        /// Add an the implementer of IResponseHandler to the client-side socket.
+        /// Adds an the implementer of IResponseHandler to the client-side socket.
         /// </summary>
-        /// <param name="listener">the implementer of IResponseHandler.</param>
+        /// <param name="requestCode">the indentifier of request.</param>
+        /// <param name="responseHandler">the implementer of IResponseHandler.</param>
         /// <returns>the client-side socket.</returns>
         public SocketRemotingClient RegisterResponseHandler(int requestCode, IResponseHandler responseHandler)
         {
@@ -123,7 +124,7 @@ namespace Enterprise.Library.Common.Remoting
             return this;
         }
         /// <summary>
-        /// Add an the implementer of IRemotingServerMessageHandler to the client-side socket.
+        /// Adds an the implementer of IRemotingServerMessageHandler to the client-side socket.
         /// </summary>
         /// <param name="listener">the implementer of IRemotingServerMessageHandler.</param>
         /// <returns>the client-side socket.</returns>
@@ -147,7 +148,7 @@ namespace Enterprise.Library.Common.Remoting
             return this;
         }
         /// <summary>
-        /// shutdown a client-side socket.
+        /// Shutdowns a client-side socket.
         /// </summary>
         /// <returns></returns>
         public void Shutdown()
@@ -165,7 +166,7 @@ namespace Enterprise.Library.Common.Remoting
         /// <returns>a instance of RemotingResponse.</returns>
         public RemotingResponse InvokeSync(RemotingRequest request, int timeoutMillis)
         {
-            var task = this.InvokeAsync(request, timeoutMillis);
+            Task<RemotingResponse> task = this.InvokeAsync(request, timeoutMillis);
             RemotingResponse response = task.WaitResult(timeoutMillis);
 
             if (response == null)
@@ -226,7 +227,7 @@ namespace Enterprise.Library.Common.Remoting
         /// <param name="request">the instance of RemotingRequest.</param>
         public void InvokeOneway(RemotingRequest request)
         {
-            EnsureClientStatus();
+            this.EnsureClientStatus();
 
             request.Type = RemotingRequestType.Oneway;
             _clientSocket.QueueMessage(RemotingUtils.BuildRequestMessage(request));

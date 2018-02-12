@@ -15,6 +15,9 @@ namespace Enterprise.Library.Common.Socketing.Buffering
             this.BufferSize = bufferSize;
         }
 
+        /// <summary>
+        /// The capacity of buffer item.
+        /// </summary>
         public int BufferSize { get; private set; }
     }
 }

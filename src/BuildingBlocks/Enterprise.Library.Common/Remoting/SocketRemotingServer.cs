@@ -24,10 +24,10 @@ namespace Enterprise.Library.Common.Remoting
         private bool _isShutteddown = false;
 
         public SocketRemotingServer()
-            : this("server", new IPEndPoint(IPAddress.Loopback, 5000))
+            : this("server-side", new IPEndPoint(IPAddress.Loopback, 5000))
         { }
         public SocketRemotingServer(SocketSetting setting)
-            : this("server", new IPEndPoint(IPAddress.Loopback, 5000), setting)
+            : this("server-side", new IPEndPoint(IPAddress.Loopback, 5000), setting)
         { }
         public SocketRemotingServer(
             string name,
@@ -36,9 +36,9 @@ namespace Enterprise.Library.Common.Remoting
         {
             _setting = setting ?? new SocketSetting();
             _receiveDataBufferPool = new BufferPool(_setting.ReceiveDataBufferSize, _setting.ReceiveDataBufferPoolSize);
-            _serverSocket = new ServerSocket(listeningEndPoint, _setting, _receiveDataBufferPool, HandleRemotingRequest);
+            _serverSocket = new ServerSocket(listeningEndPoint, _setting, _receiveDataBufferPool, this.HandleRemotingRequest);
             _requestHandlerDict = new Dictionary<int, IRequestHandler>();
-            _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(name ?? GetType().Name);
+            _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(name ?? this.GetType().Name);
         }
 
         #endregion
@@ -53,14 +53,14 @@ namespace Enterprise.Library.Common.Remoting
             get { return _receiveDataBufferPool; }
         }
         /// <summary>
-        /// Represents the server-side socket.
+        /// Represents the server-side socket instance.
         /// </summary>
         public ServerSocket ServerSocket
         {
             get { return _serverSocket; }
         }
         /// <summary>
-        /// Add an the instance of IConnectionEventListener to the server-side socket.
+        /// Adds an the instance of IConnectionEventListener to the server-side socket.
         /// </summary>
         /// <param name="listener"></param>
         /// <returns>the instance of server-side socket.</returns>
@@ -90,7 +90,7 @@ namespace Enterprise.Library.Common.Remoting
             return this;
         }
         /// <summary>
-        /// Add an the instance of IRequestHandler to the server-side socket.
+        /// Adds an the instance of IRequestHandler to the server-side socket.
         /// </summary>
         /// <param name="requestCode">the indentifier of request.</param>
         /// <param name="requestHandler">the instance of IRequestHandler.</param>
@@ -101,7 +101,7 @@ namespace Enterprise.Library.Common.Remoting
             return this;
         }
         /// <summary>
-        /// Pushes remoting message to all client-side tcp connections.
+        /// Pushes remoting message to all connected client-side tcp connections.
         /// </summary>
         /// <param name="message">the remoting message.</param>
         public void PushMessageToAllConnections(RemotingServerMessage message)

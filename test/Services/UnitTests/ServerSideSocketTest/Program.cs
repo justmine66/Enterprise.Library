@@ -3,7 +3,6 @@ using Enterprise.Library.Common.Components;
 using Enterprise.Library.Common.ConsoleLogging;
 using Enterprise.Library.Common.Logging;
 using Enterprise.Library.Common.Remoting;
-using Enterprise.Library.Common.Socketing;
 using System;
 using System.Configuration;
 using System.Text;
