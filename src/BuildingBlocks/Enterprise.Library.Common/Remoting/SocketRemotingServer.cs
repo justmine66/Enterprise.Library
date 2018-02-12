@@ -24,10 +24,10 @@ namespace Enterprise.Library.Common.Remoting
         private bool _isShutteddown = false;
 
         public SocketRemotingServer()
-            : this("server-side", new IPEndPoint(IPAddress.Loopback, 5000))
+            : this("serverSide", new IPEndPoint(IPAddress.Loopback, 5000))
         { }
         public SocketRemotingServer(SocketSetting setting)
-            : this("server-side", new IPEndPoint(IPAddress.Loopback, 5000), setting)
+            : this("serverSide", new IPEndPoint(IPAddress.Loopback, 5000), setting)
         { }
         public SocketRemotingServer(
             string name,

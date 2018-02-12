@@ -12,7 +12,7 @@ namespace Enterprise.Library.Common.ConsoleLogging
     /// </summary>
     public static class ConfigurationExtensions
     {
-        /// <summary>Use Log4Net as the logger.
+        /// <summary>Use console as the logger.
         /// </summary>
         /// <returns></returns>
         public static Configuration UseConsoleLogging(this Configuration configuration)

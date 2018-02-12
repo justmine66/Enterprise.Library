@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\BuildingBlocks\Enterprise.Library.Common.Autofac\Enterprise.Library.Common.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\..\src\BuildingBlocks\Enterprise.Library.Common.ConsoleLogging\Enterprise.Library.Common.ConsoleLogging.csproj" />
+    <ProjectReference Include="..\..\..\..\src\BuildingBlocks\Enterprise.Library.Common.Log4NetLogging\Enterprise.Library.Common.Log4NetLogging.csproj" />
+    <ProjectReference Include="..\..\..\..\src\BuildingBlocks\Enterprise.Library.Common\Enterprise.Library.Common.csproj" />
+  </ItemGroup>
+
+</Project>

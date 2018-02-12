@@ -42,6 +42,9 @@ namespace Enterprise.Library.Common.Remoting
         bool _shutteddown = false;
         bool _started = false;
 
+        public SocketRemotingClient(IPAddress serverAddress, int port, SocketSetting setting = null, EndPoint localEndPoint = null)
+            : this(new IPEndPoint(serverAddress, port), setting, localEndPoint)
+        { }
         public SocketRemotingClient(EndPoint serverEndPoint, SocketSetting setting = null, EndPoint localEndPoint = null)
         {
             Ensure.NotNull(serverEndPoint, "serverEndPoint");
