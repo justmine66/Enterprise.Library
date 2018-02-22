@@ -9,7 +9,13 @@ namespace Enterprise.Library.Common.Performances
         public long TotalCount { get; private set; }
         public long Throughput { get; private set; }
         public long AverageThroughput { get; private set; }
+        /// <summary>
+        /// The response time.
+        /// </summary>
         public double RT { get; private set; }
+        /// <summary>
+        /// The average response time.
+        /// </summary>
         public double AverageRT { get; private set; }
 
         public PerformanceInfo(long totalCount, long throughput, long averageThroughput, double rt, double averageRT)

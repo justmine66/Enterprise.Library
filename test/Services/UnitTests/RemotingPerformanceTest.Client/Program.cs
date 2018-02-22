@@ -10,7 +10,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using EConfigration = Enterprise.Library.Common.Configurations.Configuration;
+using ECommonConfig = Enterprise.Library.Common.Configurations.Configuration;
 
 namespace RemotingPerformanceTest.Client
 {
@@ -35,12 +35,13 @@ namespace RemotingPerformanceTest.Client
         static void InitializeECommon()
         {
             _message = new byte[int.Parse(ConfigurationManager.AppSettings["MessageSize"])];
-            _mode = ConfigurationManager.AppSettings["Mode"];
+            _mode = ConfigurationManager.AppSettings["Mode"] ?? "Oneway";
             _messageCount = int.Parse(ConfigurationManager.AppSettings["MessageCount"]);
 
             var logContextText = "mode: " + _mode;
 
-            EConfigration.Create()
+            ECommonConfig
+                .Create()
                 .UseAutofac()
                 .RegisterCommonComponents()
                 .RegisterUnhandledExceptionHandler()
@@ -72,16 +73,16 @@ namespace RemotingPerformanceTest.Client
 
             switch (_mode)
             {
-                case "Oneway":
+                case "Oneway"://QPS
                     sendAction = () =>
                     {
                         _client.InvokeOneway(new RemotingRequest(100, _message));
                     };
                     break;
-                case "Sync":
+                case "Sync"://TPS
                     sendAction = () =>
                     {
-                        var request = new RemotingRequest(101, _message);
+                        var request = new RemotingRequest(100, _message);
                         RemotingResponse response = _client.InvokeSync(request, 5000);
                         if (response.ResponseCode != 10)
                         {
@@ -91,10 +92,10 @@ namespace RemotingPerformanceTest.Client
                         _performanceService.IncrementKeyCount(_mode, DateTime.Now.Subtract(response.RequestTime).TotalMilliseconds);
                     };
                     break;
-                case "Async":
+                case "Async"://TPS
                     sendAction = () =>
                     {
-                        var request = new RemotingRequest(102, _message);
+                        var request = new RemotingRequest(100, _message);
                         _client.InvokeAsync(request, 5000).ContinueWith(task =>
                         {
                             if (task.Exception != null)
@@ -112,15 +113,15 @@ namespace RemotingPerformanceTest.Client
                         });
                     };
                     break;
-                case "Callback":
-                    _client.RegisterResponseHandler(103, new ResponseHandler(_performanceService, _mode));
-                    sendAction = () => _client.InvokeWaitCallbask(new RemotingRequest(102, _message));
+                case "Callback"://TPS
+                    _client.RegisterResponseHandler(100, new ResponseHandler(_performanceService, _mode));
+                    sendAction = () => _client.InvokeWaitCallbask(new RemotingRequest(103, _message));
                     break;
             }
 
             Task.Factory.StartNew(() =>
             {
-                for (var i = 0; i < _messageCount; i++)
+                for (var i = 0; i < 1; i++)
                 {
                     try
                     {

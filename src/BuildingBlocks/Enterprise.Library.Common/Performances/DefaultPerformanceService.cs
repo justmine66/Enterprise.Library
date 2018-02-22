@@ -11,9 +11,9 @@ namespace Enterprise.Library.Common.Performances
 {
     public class DefaultPerformanceService : IPerformanceService
     {
-        private string _name;
-        private PerformanceServiceSetting _setting;
-        private string _taskName;
+        string _name;
+        PerformanceServiceSetting _setting;
+        string _taskName;
 
         readonly ILogger _logger;
         readonly IScheduleService _scheduleService;
@@ -65,12 +65,12 @@ namespace Enterprise.Library.Common.Performances
         {
             if (string.IsNullOrWhiteSpace(_taskName))
             {
-                throw new Exception(string.Format("Please initialize the {0} before start it.", GetType().FullName));
+                throw new Exception(string.Format("Please initialize the {0} before starting it.", this.GetType().FullName));
             }
 
             _scheduleService.StartTask(_taskName, () =>
             {
-                foreach (var entry in _countInfoDict)
+                foreach (KeyValuePair<string, CountInfo> entry in _countInfoDict)
                 {
                     entry.Value.Calculate();
                 }
@@ -212,7 +212,7 @@ namespace Enterprise.Library.Common.Performances
 
             private void CalculateThroughput()
             {
-                var totalCount = _totalCount;
+                long totalCount = _totalCount;
                 _throughput = totalCount - _previousCount;
                 _previousCount = totalCount;
 
@@ -225,9 +225,9 @@ namespace Enterprise.Library.Common.Performances
 
             private void CalculateRT()
             {
-                var rtCount = _rtCount;
-                var rtTime = _rtTime;
-                var totalRTTime = _totalRTTime;
+                long rtCount = _rtCount;
+                long rtTime = _rtTime;
+                long totalRTTime = _totalRTTime;
 
                 if (rtCount > 0)
                 {

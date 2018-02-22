@@ -8,7 +8,7 @@ using System.Configuration;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using EConfiguration = Enterprise.Library.Common.Configurations.Configuration;
+using ECommonConfig = Enterprise.Library.Common.Configurations.Configuration;
 
 namespace ServerSideSocketTest
 {
@@ -19,7 +19,7 @@ namespace ServerSideSocketTest
 
         static void Main(string[] args)
         {
-            EConfiguration
+            ECommonConfig
                 .Create()
                 .UseAutofac()
                 .RegisterCommonComponents()

@@ -5,7 +5,7 @@ using Enterprise.Library.Common.Logging;
 using Enterprise.Library.Common.Performances;
 using Enterprise.Library.Common.Remoting;
 using System;
-using EConfigration = Enterprise.Library.Common.Configurations.Configuration;
+using ECommonConfig = Enterprise.Library.Common.Configurations.Configuration;
 
 namespace RemotingPerformanceTest.Server
 {
@@ -13,7 +13,8 @@ namespace RemotingPerformanceTest.Server
     {
         static void Main(string[] args)
         {
-            EConfigration.Create()
+            ECommonConfig
+                .Create()
                 .UseAutofac()
                 .RegisterCommonComponents()
                 .RegisterUnhandledExceptionHandler()

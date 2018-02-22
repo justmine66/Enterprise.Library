@@ -135,13 +135,13 @@ namespace Enterprise.Library.Common.Remoting
         {
             var srcOffset = 0;
 
-            var id = ByteUtils.DecodeString(data, srcOffset, out srcOffset);
-            var type = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
-            var code = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
-            var createdTime = ByteUtils.DecodeDateTime(data, srcOffset, out srcOffset);
-            var headerLength = ByteUtils.DecodeInt(data, srcOffset, out srcOffset);
-            var header = HeaderUtils.DecodeHeader(data, srcOffset, out srcOffset);
-            var bodyLength = data.Length - srcOffset;
+            string id = ByteUtils.DecodeString(data, srcOffset, out srcOffset);
+            short type = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
+            short code = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
+            DateTime createdTime = ByteUtils.DecodeDateTime(data, srcOffset, out srcOffset);
+            int headerLength = ByteUtils.DecodeInt(data, srcOffset, out srcOffset);
+            IDictionary<string, string> header = HeaderUtils.DecodeHeader(data, srcOffset, out srcOffset);
+            int bodyLength = data.Length - srcOffset;
             var body = new byte[bodyLength];
 
             Buffer.BlockCopy(data, srcOffset, body, 0, bodyLength);
