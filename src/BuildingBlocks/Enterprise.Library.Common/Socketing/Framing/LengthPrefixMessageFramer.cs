@@ -7,18 +7,18 @@ using System.Text;
 namespace Enterprise.Library.Common.Socketing.Framing
 {
     /// <summary>
-    /// message framer with length prefix
+    /// Represents a message framer with length prefix
     /// </summary>
     public class LengthPrefixMessageFramer : IMessageFramer
     {
-        private static readonly ILogger _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(LengthPrefixMessageFramer).FullName);
+        static readonly ILogger _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(LengthPrefixMessageFramer).FullName);
 
         public const int HeaderLength = sizeof(Int32);
         private Action<ArraySegment<byte>> _receivedHandler;
 
         private byte[] _messageBuffer;
         private int _bufferIndex = 0;
-        private int _headerBytes = 0; 
+        private int _headerBytes = 0;
         private int _packageLength = 0;
 
         /// <summary>

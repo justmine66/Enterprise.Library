@@ -8,11 +8,11 @@ using System.Text;
 namespace Enterprise.Library.Common.Socketing.Framing
 {
     /// <summary>
-    /// represents a no-op message framer
+    /// Represents a no-op message framer.
     /// </summary>
     public class NoopMessageFramer : IMessageFramer
     {
-        private static readonly ILogger _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(NoopMessageFramer).FullName);
+        static readonly ILogger _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(NoopMessageFramer).FullName);
 
         private Action<ArraySegment<byte>> _receivedHandler;
 

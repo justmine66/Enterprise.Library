@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>柯里化（Currying），又称部分求值（Partial Evaluation），是把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术。百科上的定义是针对众多函数式语言而言的，按照Stoyan Stefanov(《JavaScript Pattern》作者)的说法，所谓“柯里化”就是使函数理解并处理部分应用，套用上面官员例子，就是只要有合法老婆和见不得的情妇就行，数目什么的随意。将一个函数的多个参数分解成多个函数， 然后将函数多层封装起来，每层函数都返回一个函数去接收下一个参数，这可以简化函数的多个参数</h1>
+    <script>
+        //柯里化有3个常见作用：1. 参数复用；2. 提前返回；3. 延迟计算/运行。
+        var currying = function (fn) {
+            // fn 指官员消化老婆的手段
+            var args = [].slice.call(arguments, 1);
+            // args 指的是那个合法老婆
+            return function () {
+                // 已经有的老婆和新搞定的老婆们合成一体，方便控制
+                var newArgs = args.concat([].slice.call(arguments));
+                // 这些老婆们用 fn 这个手段消化利用，完成韦小宝前辈的壮举并返回
+                return fn.apply(null, newArgs);
+            };
+        };
+        // 下为官员如何搞定7个老婆的测试
+        // 获得合法老婆
+        var getWife = currying(function () {
+            var allWife = [].slice.call(arguments);
+            // allwife 就是所有的老婆的，包括暗渡陈仓进来的老婆
+            console.log(allWife.join(";"));
+        }, "合法老婆");
+        // 获得其他6个老婆
+        getWife("大老婆", "小老婆", "俏老婆", "刁蛮老婆", "乖老婆", "送上门老婆");
+        // 换一批老婆
+        getWife("超越韦小宝的老婆");
+        //柯南身子虽小，但是里面住的却是大柯南，也就是一个function里面还有个function。不同柯南处理不同情况，例如，小柯南可以和…稍等，他女朋友叫什么的忘了，我查查…哦，毛利兰一起洗澡澡；但是大柯南就不行。小柯南不能当面指正犯人，需借助小五郎；但是，大柯南就可以直接质问指出凶手。就类似于，内外function处理不同的参数。如果代码表示就是(小柯南=smallKenan; 大柯南=bigKenan; 小柯南嗑药会变大柯南)
+        var smallKenan = function (action) {
+            var bigKenan = function (doing) {
+                var result = "";
+                if (action === "take drugs") {
+                    if (doing === "bathWithGirlFriend") {
+                        result = "尖叫，新一，你这个色狼，然后一巴掌，脸煮熟了~";
+                    } else if (doing === "pointOutKiller") {
+                        result = "新一，这个案子就交给你的，快点找出谁是凶手吧~";
+                    }
+                } else {
+                    if (doing === "bathWithGirlFriend") {
+                        result = "来吧，柯南，一起洗澡吧~";
+                    } else if (doing === "pointOutKiller") {
+                        result = "小孩子家，滚一边去！";
+                    }
+                }
+                console.log(result);
+                return arguments.callee; // 等同于return bigKenan
+            };
+            return bigKenan;
+        };
+        // 小柯南吃药了，然后和毛利兰洗澡，凶案现场指证犯人；结果是……
+        smallKenan("take drugs")("bathWithGirlFriend")("pointOutKiller");
+    </script>
+</body>
+</html>
