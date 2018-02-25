@@ -62,7 +62,7 @@ namespace Enterprise.Library.Common.Remoting
             _scheduleService = ObjectContainer.Resolve<IScheduleService>();
             _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(GetType().FullName);
 
-            RegisterConnectionEventListener(new ConnectionEventListener(this));
+            this.RegisterConnectionEventListener(new ConnectionEventListener(this));
         }
 
         #endregion
@@ -145,7 +145,7 @@ namespace Enterprise.Library.Common.Remoting
             if (_started) return this;
 
             this.StartClientSocket();
-            this.StartScanTimeoutRequestTask();
+            this.StartScanTimeoutRequestTask();//when asynchronously sends request to server.
             _shutteddown = false;
             _started = false;
             return this;
@@ -162,7 +162,7 @@ namespace Enterprise.Library.Common.Remoting
             this.ShutdownClientSocket();
         }
         /// <summary>
-        /// Synchronous sends request to server.
+        /// Synchronously sends request to server.
         /// </summary>
         /// <param name="request">the instance of RemotingRequest..</param>
         /// <param name="timeoutMillis">the timeout in milliseconds.</param>
@@ -191,7 +191,7 @@ namespace Enterprise.Library.Common.Remoting
             return response;
         }
         /// <summary>
-        /// Asynchronous sends request to server.
+        /// Asynchronously sends request to server.
         /// </summary>
         /// <param name="request">the instance of RemotingRequest.</param>
         /// <param name="timeoutMillis">the timeout in milliseconds.</param>
@@ -247,7 +247,7 @@ namespace Enterprise.Library.Common.Remoting
             switch (remotingServerMessage.Type)
             {
                 case RemotingServerMessageType.RemotingResponse:
-                    this.HandleResponseMessage(connection, message);
+                    this.HandleResponseMessage(connection, remotingServerMessage.Body);
                     break;
                 case RemotingServerMessageType.ServerMessage:
                     this.HandleServerPushMessage(connection, remotingServerMessage);

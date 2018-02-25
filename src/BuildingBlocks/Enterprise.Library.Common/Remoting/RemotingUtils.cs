@@ -81,18 +81,18 @@ namespace Enterprise.Library.Common.Remoting
         {
             var srcOffset = 0;
 
-            var requestSequence = ByteUtils.DecodeLong(data, srcOffset, out srcOffset);
-            var requestCode = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
-            var requestType = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
-            var requestTime = ByteUtils.DecodeDateTime(data, srcOffset, out srcOffset);
-            var requestHeaderLength = ByteUtils.DecodeInt(data, srcOffset, out srcOffset);
-            var requestHeader = HeaderUtils.DecodeHeader(data, srcOffset, out srcOffset);
-            var responseCode = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
-            var responseTime = ByteUtils.DecodeDateTime(data, srcOffset, out srcOffset);
-            var responseHeaderLength = ByteUtils.DecodeInt(data, srcOffset, out srcOffset);
-            var responseHeader = HeaderUtils.DecodeHeader(data, srcOffset, out srcOffset);
+            long requestSequence = ByteUtils.DecodeLong(data, srcOffset, out srcOffset);
+            short requestCode = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
+            short requestType = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
+            DateTime requestTime = ByteUtils.DecodeDateTime(data, srcOffset, out srcOffset);
+            int requestHeaderLength = ByteUtils.DecodeInt(data, srcOffset, out srcOffset);
+            IDictionary<string, string> requestHeader = HeaderUtils.DecodeHeader(data, srcOffset, out srcOffset);
+            short responseCode = ByteUtils.DecodeShort(data, srcOffset, out srcOffset);
+            DateTime responseTime = ByteUtils.DecodeDateTime(data, srcOffset, out srcOffset);
+            int responseHeaderLength = ByteUtils.DecodeInt(data, srcOffset, out srcOffset);
+            IDictionary<string, string> responseHeader = HeaderUtils.DecodeHeader(data, srcOffset, out srcOffset);
 
-            var responseBodyLength = data.Length - srcOffset;
+            int responseBodyLength = data.Length - srcOffset;
             var responseBody = new byte[responseBodyLength];
 
             Buffer.BlockCopy(data, srcOffset, responseBody, 0, responseBodyLength);

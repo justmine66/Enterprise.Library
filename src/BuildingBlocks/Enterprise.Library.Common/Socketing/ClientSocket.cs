@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 
 namespace Enterprise.Library.Common.Socketing
@@ -194,7 +193,7 @@ namespace Enterprise.Library.Common.Socketing
             }
             catch (Exception ex)
             {
-                _logger.Error("Handle message error.", ex);
+                _logger.Error("client-side socket handle remoting message occurring error.", ex);
             }
         }
         private void OnConnectionEstablished(ITcpConnection connection)

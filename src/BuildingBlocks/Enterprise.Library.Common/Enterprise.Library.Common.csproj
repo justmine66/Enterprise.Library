@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Socketing\kq50bytr.yvy~" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Encoders\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

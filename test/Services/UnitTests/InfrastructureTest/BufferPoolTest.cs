@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BufferPoolTest
+﻿namespace BufferPoolTest
 {
     using Enterprise.Library.Common.Socketing.Buffering;
 
@@ -19,6 +15,13 @@ namespace BufferPoolTest
             var bufferPool = new BufferPool(1024 * 64, 1);
             byte[] item1 = bufferPool.Get();
             byte[] item2 = bufferPool.Get();
+        }
+
+        public static void Return_item_to_buffer_pool()
+        {
+            var bufferPool = new BufferPool(1024 * 64, 1);
+            byte[] item = bufferPool.Get();
+            bufferPool.Return(item);
         }
     }
 }

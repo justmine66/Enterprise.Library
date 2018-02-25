@@ -115,13 +115,13 @@ namespace RemotingPerformanceTest.Client
                     break;
                 case "Callback"://TPS
                     _client.RegisterResponseHandler(100, new ResponseHandler(_performanceService, _mode));
-                    sendAction = () => _client.InvokeWaitCallbask(new RemotingRequest(103, _message));
+                    sendAction = () => _client.InvokeWaitCallbask(new RemotingRequest(100, _message));
                     break;
             }
 
             Task.Factory.StartNew(() =>
             {
-                for (var i = 0; i < 1; i++)
+                for (var i = 0; i < _messageCount; i++)
                 {
                     try
                     {

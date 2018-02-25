@@ -14,8 +14,7 @@ using System.Threading.Tasks;
 
 namespace Enterprise.Library.Common.Socketing
 {
-    /// <summary>
-    /// represents a tcp connection
+    /// <summary>Represents a tcp connection.
     /// </summary>
     public class TcpConnection : ITcpConnection
     {
@@ -234,7 +233,7 @@ namespace Enterprise.Library.Common.Socketing
         {
             if (!TryEnterReceiving()) return;
 
-            var buffer = _receiveDataBufferPool.Get();
+            byte[] buffer = _receiveDataBufferPool.Get();
             if (buffer == null)
             {
                 CloseInternal(SocketError.Shutdown, "Socket receive allocate buffer failed.", null);

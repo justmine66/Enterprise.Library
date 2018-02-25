@@ -171,10 +171,8 @@ namespace Enterprise.Library.Common.Remoting
             string errorMessage,
             Exception exception = null)
         {
-            if (exception == null)
-            { _logger.Error(errorMessage); }
-            else
-            { _logger.Error(errorMessage, exception); }
+            if (exception == null) { _logger.Error(errorMessage); }
+            else { _logger.Error(errorMessage, exception); }
 
             if (request.Type != RemotingRequestType.Oneway)
             {
