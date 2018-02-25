@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D0C05BE8-2839-4CC8-A9AC-51735EE2D09E}"
 EndProject
@@ -25,11 +25,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientSideSocketTest", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enterprise.Library.Common.Autofac", "src\BuildingBlocks\Enterprise.Library.Common.Autofac\Enterprise.Library.Common.Autofac.csproj", "{8B8ED7C8-74DB-4F90-96CA-FEEF1C34E7B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotingPerformanceTest.Server", "test\Services\UnitTests\RemotingPerformanceTest.Server\RemotingPerformanceTest.Server.csproj", "{C471FC32-4E1A-446A-92CA-E5695CA5C5FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemotingPerformanceTest.Server", "test\Services\UnitTests\RemotingPerformanceTest.Server\RemotingPerformanceTest.Server.csproj", "{C471FC32-4E1A-446A-92CA-E5695CA5C5FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotingPerformanceTest.Client", "test\Services\UnitTests\RemotingPerformanceTest.Client\RemotingPerformanceTest.Client.csproj", "{3F6465C7-DAE9-43AC-BA6C-EEBF53E310FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemotingPerformanceTest.Client", "test\Services\UnitTests\RemotingPerformanceTest.Client\RemotingPerformanceTest.Client.csproj", "{3F6465C7-DAE9-43AC-BA6C-EEBF53E310FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enterprise.Library.Common.Log4NetLogging", "src\BuildingBlocks\Enterprise.Library.Common.Log4NetLogging\Enterprise.Library.Common.Log4NetLogging.csproj", "{70398178-584D-4F3E-B159-0980FF3FE271}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enterprise.Library.Common.Log4NetLogging", "src\BuildingBlocks\Enterprise.Library.Common.Log4NetLogging\Enterprise.Library.Common.Log4NetLogging.csproj", "{70398178-584D-4F3E-B159-0980FF3FE271}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enterprise.Library.EventStore", "src\BuildingBlocks\Enterprise.Library.EventStore\Enterprise.Library.EventStore.csproj", "{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{70398178-584D-4F3E-B159-0980FF3FE271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70398178-584D-4F3E-B159-0980FF3FE271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70398178-584D-4F3E-B159-0980FF3FE271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{C471FC32-4E1A-446A-92CA-E5695CA5C5FE} = {5C9E528B-8AAB-4E55-B6A3-A830F5311EE1}
 		{3F6465C7-DAE9-43AC-BA6C-EEBF53E310FB} = {5C9E528B-8AAB-4E55-B6A3-A830F5311EE1}
 		{70398178-584D-4F3E-B159-0980FF3FE271} = {4A62B1FA-45B9-4B87-8CBE-63D5D700C6CC}
+		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA} = {4A62B1FA-45B9-4B87-8CBE-63D5D700C6CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FB072F6A-27B9-49FD-893C-FED6650A032C}
