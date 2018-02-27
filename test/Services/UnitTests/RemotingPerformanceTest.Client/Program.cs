@@ -45,7 +45,7 @@ namespace RemotingPerformanceTest.Client
                 .UseAutofac()
                 .RegisterCommonComponents()
                 .RegisterUnhandledExceptionHandler()
-                .UseLog4netLogging()
+                .UseLog4net()
                 .BuildContainer();
 
             _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(Program).Name);

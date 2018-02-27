@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemotingPerformanceTest.Cli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enterprise.Library.Common.Log4NetLogging", "src\BuildingBlocks\Enterprise.Library.Common.Log4NetLogging\Enterprise.Library.Common.Log4NetLogging.csproj", "{70398178-584D-4F3E-B159-0980FF3FE271}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enterprise.Library.EventStore", "src\BuildingBlocks\Enterprise.Library.EventStore\Enterprise.Library.EventStore.csproj", "{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enterprise.Library.EventStore", "src\BuildingBlocks\Enterprise.Library.EventStore\Enterprise.Library.EventStore.csproj", "{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoragePerformanceTest", "test\Services\UnitTests\StoragePerformanceTest\StoragePerformanceTest.csproj", "{B39ED78D-4BEF-431F-840F-D37D960D9248}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,10 @@ Global
 		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B39ED78D-4BEF-431F-840F-D37D960D9248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B39ED78D-4BEF-431F-840F-D37D960D9248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B39ED78D-4BEF-431F-840F-D37D960D9248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B39ED78D-4BEF-431F-840F-D37D960D9248}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{3F6465C7-DAE9-43AC-BA6C-EEBF53E310FB} = {5C9E528B-8AAB-4E55-B6A3-A830F5311EE1}
 		{70398178-584D-4F3E-B159-0980FF3FE271} = {4A62B1FA-45B9-4B87-8CBE-63D5D700C6CC}
 		{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA} = {4A62B1FA-45B9-4B87-8CBE-63D5D700C6CC}
+		{B39ED78D-4BEF-431F-840F-D37D960D9248} = {5C9E528B-8AAB-4E55-B6A3-A830F5311EE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FB072F6A-27B9-49FD-893C-FED6650A032C}

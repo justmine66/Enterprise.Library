@@ -18,7 +18,7 @@ namespace RemotingPerformanceTest.Server
                 .UseAutofac()
                 .RegisterCommonComponents()
                 .RegisterUnhandledExceptionHandler()
-                .UseLog4netLogging()
+                .UseLog4net()
                 .BuildContainer();
 
             new SocketRemotingServer()

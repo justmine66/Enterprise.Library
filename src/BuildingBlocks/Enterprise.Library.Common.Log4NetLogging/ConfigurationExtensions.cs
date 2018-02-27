@@ -10,15 +10,15 @@ namespace Enterprise.Library.Common.Log4NetLogging
     {
         /// <summary>Use log4net as the logger.
         /// </summary>
-        public static Configuration UseLog4netLogging(this Configuration configuration)
+        public static Configuration UseLog4net(this Configuration configuration)
         {
-            return UseLog4netLogging(configuration, "log4net.config");
+            return UseLog4net(configuration, "log4net.config");
         }
 
         /// <summary>Use log4net as the logger.
         /// </summary>
         /// <param name="configFile">The full qualified name of the config file, or the relative file name.Do not end the path with the directory separator character.</param>
-        public static Configuration UseLog4netLogging(this Configuration configuration, string configFile, string loggerRepository = "NetStandardRepository")
+        public static Configuration UseLog4net(this Configuration configuration, string configFile, string loggerRepository = "NetStandardRepository")
         {
             configuration.SetDefault<ILoggerFactory, Log4NetLoggerFactory>(new Log4NetLoggerFactory(configFile));
             return configuration;

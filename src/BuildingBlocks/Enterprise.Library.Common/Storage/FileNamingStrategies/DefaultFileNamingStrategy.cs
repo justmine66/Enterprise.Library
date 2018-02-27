@@ -26,31 +26,28 @@ namespace Enterprise.Library.Common.Storage.FileNamingStrategies
             _fileNamePattern = new Regex("^" + _prefix + _pattern);
         }
 
-        public string[] GetChunkFiles(string path)
-        {
-            var files = Directory
-                        .EnumerateFiles(path)
-                        .Where(x => _fileNamePattern.IsMatch(Path.GetFileName(x)))
-                        .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
-                        .ToArray();
-
-            return files;
-        }
-
         public string GetFileNameFor(string path, int index)
         {
             Ensure.Nonnegative(index, "index");
 
-            return Path.Combine(path, string.Format(_format, _prefix, _pattern));
+            return Path.Combine(path, string.Format(_format, _prefix, index));
         }
-
+        public string[] GetChunkFiles(string path)
+        {
+            var files = Directory
+                            .EnumerateFiles(path)
+                            .Where(x => _fileNamePattern.IsMatch(Path.GetFileName(x)))
+                            .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
+                            .ToArray();
+            return files;
+        }
         public string[] GetTempFiles(string path)
         {
             var files = Directory
-                        .EnumerateFiles(path)
-                        .Where(x => _fileNamePattern.IsMatch(Path.GetFileName(x)) && x.EndsWith(".tmp"))
-                        .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
-                        .ToArray();
+                            .EnumerateFiles(path)
+                            .Where(x => _fileNamePattern.IsMatch(Path.GetFileName(x)) && x.EndsWith(".tmp"))
+                            .OrderBy(x => x, StringComparer.CurrentCultureIgnoreCase)
+                            .ToArray();
             return files;
         }
     }

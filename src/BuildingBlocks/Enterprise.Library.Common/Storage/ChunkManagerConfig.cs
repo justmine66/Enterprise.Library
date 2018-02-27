@@ -69,7 +69,34 @@ namespace Enterprise.Library.Common.Storage
         /// <summary>表示是否需要统计Chunk的写入和读取情况
         /// </summary>
         public readonly bool EnableChunkStatistic;
-
+        /// <summary>初始化一个<see cref="ChunkManager"/>实例。
+        /// </summary>
+        /// <param name="basePath">Chunk文件存储的根目录</param>
+        /// <param name="fileNamingStrategy">Chunk文件命名规则策略</param>
+        /// <param name="chunkDataSize">Chunk文件大小，字节为单位，适用于文件内记录大小不固定的场景，如果是固定大小，则设置为0</param>
+        /// <param name="chunkDataUnitSize">Chunk文件单条数据大小，字节为单位，适用于每条数据固定大小的场景</param>
+        /// <param name="chunkDataCount">Chunk文件总数据数，适用于每个数据固定大小的场景</param>
+        /// <param name="flushChunkIntervalMilliseconds">Chunk文件刷磁盘的间隔，毫秒为单位</param>
+        /// <param name="enableCache">表示是否缓存Chunk，缓存Chunk可以提高消费速度</param>
+        /// <param name="syncFlush">表示是否同步刷盘</param>
+        /// <param name="flushOption">刷盘方式，是直接将数据刷入磁盘还是先刷入OS</param>
+        /// <param name="chunkReaderCount">Chunk文件的BinaryReader的个数</param>
+        /// <param name="maxLogRecordSize">Chunk文件允许最大的记录的大小，字节为单位</param>
+        /// <param name="chunkWriteBuffer">Chunk写入时的缓冲大小，字节为单位</param>
+        /// <param name="chunkReadBuffer">Chunk读取时的缓冲大小，字节为单位</param>
+        /// <param name="chunkCacheMaxCount">Chunk可以缓存的个数上限，超过上限则不会自动缓存新创建的Chunk文件</param>
+        /// <param name="chunkCacheMinCount">Chunk可以缓存的个数下限；低于下限则不需要进行Chunk文件的非托管内存释放处理；高于下限，则开始进行Chunk文件的非托管内存释放处理</param>
+        /// <param name="preCacheChunkCount">应用启动时，需要预加载到非托管内存的Chunk文件数</param>
+        /// <param name="chunkInactiveTimeMaxSeconds">Chunk文件非活跃时间，单位为秒
+        /// <remarks>
+        /// 在释放已完成的Chunk文件的非托管内存时，会根据这个非活跃时间来判断当前Chunk文件是否允许释放内存；
+        /// 如果某个已完成并已经有对应非托管内存的Chunk文件有超过这个时间都不活跃，则可以进行非托管内存的释放；
+        /// 是否活跃的依据是，只要该Chunk文件有发生读取或写入，就更新活跃时间；
+        /// 释放时，根据非活跃时间的长短作为顺序，总是先把非活跃时间最大的Chunk文件的非托管内存释放。
+        /// </remarks>
+        /// </param>
+        /// <param name="chunkLocalCacheSize">表示当Chunk文件无法分配非托管内存时，使用本地的环形数组进行缓存最新的记录。此属性指定本地环形数组的大小；</param>
+        /// <param name="enableChunkStatistic">表示是否需要统计Chunk的写入和读取情况</param>
         public ChunkManagerConfig(string basePath,
                                IFileNamingStrategy fileNamingStrategy,
                                int chunkDataSize,
@@ -130,13 +157,13 @@ namespace Enterprise.Library.Common.Storage
             this.ChunkLocalCacheSize = chunkLocalCacheSize;
             this.EnableChunkStatistic = enableChunkStatistic;
 
-            if (GetChunkDataSize() > 1024 * 1024 * 1024)
+            if (this.GetChunkDataSize() > 1024 * 1024 * 1024)
             {
                 throw new ArgumentException("Chunk data size cannot bigger than 1G");
             }
         }
 
-        private int GetChunkDataSize()
+        public int GetChunkDataSize()
         {
             if (this.ChunkDataSize > 0)
             {
