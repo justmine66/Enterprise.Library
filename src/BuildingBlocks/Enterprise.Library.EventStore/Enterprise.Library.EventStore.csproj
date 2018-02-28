@@ -8,4 +8,8 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Enterprise.Library.Common\Enterprise.Library.Common.csproj" />
+  </ItemGroup>
+
 </Project>

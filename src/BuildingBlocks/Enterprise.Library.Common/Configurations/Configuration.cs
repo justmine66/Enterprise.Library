@@ -6,8 +6,6 @@ using Enterprise.Library.Common.Scheduling;
 using Enterprise.Library.Common.Serializing;
 using Enterprise.Library.Common.Socketing.Framing;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Enterprise.Library.Common.Configurations
 {

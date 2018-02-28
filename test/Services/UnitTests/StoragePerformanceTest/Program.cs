@@ -37,11 +37,11 @@ namespace StoragePerformanceTest
             var syncFlush = bool.Parse(ConfigurationManager.AppSettings["syncFlush"]);               //是否同步刷盘
             FlushOption flushOption;
             Enum.TryParse(ConfigurationManager.AppSettings["flushOption"], out flushOption);         //同步刷盘方式
-            var chunkSize = 1024 * 1024 * 1024;
+            var chunkSize = 1024 * 1024 * 10;//1G
             var flushInterval = 100;
-            var maxRecordSize = 5 * 1024 * 1024;
-            var chunkWriteBuffer = 128 * 1024;
-            var chunkReadBuffer = 128 * 1024;
+            var maxRecordSize = 5 * 1024 * 1024;//5M
+            var chunkWriteBuffer = 128 * 1024;//128KB
+            var chunkReadBuffer = 128 * 1024;//128KB
             var chunkManagerConfig = new ChunkManagerConfig(
                 Path.Combine(storeRootPath, @"sample-chunks"),
                 new DefaultFileNamingStrategy("message-chunk-"),
@@ -87,7 +87,7 @@ namespace StoragePerformanceTest
                         }
                         var start = DateTime.Now;
                         chunkWriter.Write(record);
-                        performanceService.IncrementKeyCount("default", (DateTime.Now - start).TotalMilliseconds);
+                        performanceService.IncrementKeyCount("WriteChunk", (DateTime.Now - start).TotalMilliseconds);
                     }
                 });
             }

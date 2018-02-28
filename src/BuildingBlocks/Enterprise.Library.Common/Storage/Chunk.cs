@@ -4,6 +4,7 @@ using Enterprise.Library.Common.Storage.Exceptions;
 using Enterprise.Library.Common.Utilities;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -42,8 +43,8 @@ namespace Enterprise.Library.Common.Storage
 
         private Chunk _memoryChunk;
         private CacheItem[] _cacheItems;
-        private IntPtr _cachedData;
-        private int _cachedLength;
+        private IntPtr _cachedData;//A pointer to the newly allocated memory.
+        private int _cachedLength;//The length of memory to use.
 
         private WriterWorkItem _writerWorkItem;
 
@@ -193,10 +194,10 @@ namespace Enterprise.Library.Common.Storage
             {
                 using (var reader = new BinaryReader(fileStream))
                 {
-                    _chunkHeader = ReadHeader(fileStream, reader);
-                    _chunkFooter = ReadFooter(fileStream, reader);
+                    _chunkHeader = this.ReadHeader(fileStream, reader);
+                    _chunkFooter = this.ReadFooter(fileStream, reader);
 
-                    CheckCompletedFileChunk();
+                    this.CheckCompletedFileChunk();
                 }
             }
 
@@ -205,14 +206,14 @@ namespace Enterprise.Library.Common.Storage
 
             if (_isMemoryChunk)
             {
-                LoadFileChunkToMemory();
+                this.LoadFileChunkToMemory();
             }
             else
             {
-                SetFileAttributes();
+                this.SetFileAttributes();
             }
 
-            InitializeReaderWorkItems();
+            this.InitializeReaderWorkItems();
 
             _lastActiveTime = DateTime.Now;
         }
@@ -265,7 +266,7 @@ namespace Enterprise.Library.Common.Storage
                     File.Move(tempFilename, _filename);
 
                     writeStream = new FileStream(_filename, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, _chunkConfig.ChunkWriteBuffer, FileOptions.SequentialScan);
-                    SetFileAttributes();
+                    this.SetFileAttributes();
                 }
 
                 writeStream.Position = ChunkHeader.Size;
@@ -274,7 +275,7 @@ namespace Enterprise.Library.Common.Storage
                 _flushedDataPosition = 0;
                 _writerWorkItem = new WriterWorkItem(new ChunkFileStream(writeStream, _chunkConfig.FlushOption));
 
-                InitializeReaderWorkItems();
+                this.InitializeReaderWorkItems();
 
                 if (!_isMemoryChunk)
                 {
@@ -451,7 +452,7 @@ namespace Enterprise.Library.Common.Storage
 
                 try
                 {
-                    var cachedFileChunks = _chunkManager.GetCachedFileChunks();
+                    IList<Chunk> cachedFileChunks = _chunkManager.GetCachedFileChunks();
                     if (cachedFileChunks.Count >= _chunkConfig.ChunkCacheMaxCount)
                     {
                         return false;
@@ -591,12 +592,12 @@ namespace Enterprise.Library.Common.Storage
 
             _lastActiveTime = DateTime.Now;
 
-            var writerWorkItem = _writerWorkItem;
-            var bufferStream = writerWorkItem.BufferStream;
-            var bufferWriter = writerWorkItem.BufferWriter;
+            WriterWorkItem writerWorkItem = _writerWorkItem;
+            MemoryStream bufferStream = writerWorkItem.BufferStream;
+            BinaryWriter bufferWriter = writerWorkItem.BufferWriter;
             var recordBuffer = default(byte[]);
 
-            if (IsFixedDataSize())
+            if (this.IsFixedDataSize())
             {
                 if (writerWorkItem.WorkingStream.Position + _chunkConfig.ChunkDataUnitSize > ChunkHeader.Size + _chunkHeader.ChunkDataTotalSize)
                 {
@@ -834,7 +835,7 @@ namespace Enterprise.Library.Common.Storage
             using (var fileStream = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 8192, FileOptions.None))
             {
                 var cachedLength = (int)fileStream.Length;
-                var cachedData = Marshal.AllocHGlobal(cachedLength);
+                IntPtr cachedData = Marshal.AllocHGlobal(cachedLength);
 
                 try
                 {

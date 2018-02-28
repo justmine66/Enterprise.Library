@@ -116,10 +116,10 @@ namespace Enterprise.Library.Common.Storage
                 if (files.Length > 0)
                 {
                     var cachedChunkCount = 0;
-                    for (var i = files.Length - 2; i >= 0; i--)
+                    for (var i = files.Length - 2; i >= 0; i--)//排除正在进行的文件，即最后一个文件
                     {
                         var file = files[i];
-                        var chunk = Chunk.FromCompletedFile(file, this, _config, _isMemoryMode);
+                        Chunk chunk = Chunk.FromCompletedFile(file, this, _config, _isMemoryMode);
                         if (_config.EnableCache && cachedChunkCount < _config.PreCacheChunkCount)
                         {
                             if (chunk.TryCacheInMemory(false))
@@ -127,13 +127,13 @@ namespace Enterprise.Library.Common.Storage
                                 cachedChunkCount++;
                             }
                         }
-                        AddChunk(chunk);
+                        this.AddChunk(chunk);
                     }
                     var lastFile = files[files.Length - 1];
-                    AddChunk(Chunk.FromOngoingFile(lastFile, this, _config, readRecordFunc, _isMemoryMode));
+                    this.AddChunk(Chunk.FromOngoingFile(lastFile, this, _config, readRecordFunc, _isMemoryMode));
                 }
 
-                if (_config.EnableCache)
+                if (_config.EnableCache)//定期开启任务来清理缓存。
                 {
                     _scheduleService.StartTask("UncacheChunks", () => UncacheChunks(), 1000, 1000);
                 }
@@ -155,7 +155,7 @@ namespace Enterprise.Library.Common.Storage
                 var chunkFileName = _config.FileNamingStrategy.GetFileNameFor(_chunkPath, chunkNumber);
                 var chunk = Chunk.CreateNew(chunkFileName, chunkNumber, this, _config, _isMemoryMode);
 
-                AddChunk(chunk);
+                this.AddChunk(chunk);
 
                 return chunk;
             }
@@ -228,7 +228,7 @@ namespace Enterprise.Library.Common.Storage
                 try
                 {
                     var nextChunkNumber = currentChunk.ChunkHeader.ChunkNumber + 1;
-                    var nextChunk = GetChunk(nextChunkNumber);
+                    var nextChunk = this.GetChunk(nextChunkNumber);
                     if (nextChunk != null && !nextChunk.IsMemoryChunk && nextChunk.IsCompleted && !nextChunk.HasCachedChunk)
                     {
                         Task.Factory.StartNew(() => nextChunk.TryCacheInMemory(false));
@@ -313,8 +313,8 @@ namespace Enterprise.Library.Common.Storage
             {
                 try
                 {
-                    var inactiveCachedFileChunks = GetCachedFileChunks(true, true);
-                    var maxUncacheCount = inactiveCachedFileChunks.Count - _config.ChunkCacheMinCount;
+                    IList<Chunk> inactiveCachedFileChunks = GetCachedFileChunks(true, true);
+                    int maxUncacheCount = inactiveCachedFileChunks.Count - _config.ChunkCacheMinCount;
                     if (maxUncacheCount <= 0)
                     {
                         return 0;
@@ -325,7 +325,7 @@ namespace Enterprise.Library.Common.Storage
                         _logger.DebugFormat("Current cached inactive file chunk count {0} exceed the chunkCacheMinCount {1}, try to uncache chunks.", inactiveCachedFileChunks.Count, _config.ChunkCacheMinCount);
                     }
 
-                    foreach (var fileChunk in inactiveCachedFileChunks)
+                    foreach (Chunk fileChunk in inactiveCachedFileChunks)
                     {
                         if (fileChunk.UnCacheFromMemory())
                         {

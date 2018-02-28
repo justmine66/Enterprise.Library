@@ -1,0 +1,35 @@
+2018-02-27 17:29:42,872  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 220498, throughput: 220308, averageThrughput: 220308, rt: 0.004ms, averageRT: 0.004ms
+2018-02-27 17:29:43,934  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 466758, throughput: 246450, averageThrughput: 233379, rt: 0.004ms, averageRT: 0.004ms
+2018-02-27 17:29:44,946  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 699271, throughput: 232513, averageThrughput: 233090, rt: 0.003ms, averageRT: 0.004ms
+2018-02-27 17:29:45,955  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 930322, throughput: 231051, averageThrughput: 232580, rt: 0.003ms, averageRT: 0.004ms
+2018-02-27 17:29:47,063  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1028488, throughput: 98166, averageThrughput: 205697, rt: 0.004ms, averageRT: 0.004ms
+2018-02-27 17:29:48,076  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1094686, throughput: 66198, averageThrughput: 182447, rt: 0.025ms, averageRT: 0.005ms
+2018-02-27 17:29:49,090  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1228989, throughput: 134303, averageThrughput: 175569, rt: 0.007ms, averageRT: 0.005ms
+2018-02-27 17:29:50,105  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1260251, throughput: 31262, averageThrughput: 157531, rt: 0.032ms, averageRT: 0.006ms
+2018-02-27 17:29:51,118  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1271299, throughput: 11048, averageThrughput: 141255, rt: 0.064ms, averageRT: 0.006ms
+2018-02-27 17:29:52,132  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1290132, throughput: 18833, averageThrughput: 129013, rt: 0.069ms, averageRT: 0.007ms
+2018-02-27 17:29:53,147  INFO Enterprise.Library.Common.Performances.DefaultPerformanceService - WriteChunk, totalCount: 1311664, throughput: 21532, averageThrughput: 119242, rt: 0.035ms, averageRT: 0.008ms
+2018-02-27 17:38:49,826 ERROR Enterprise.Library.Common.Storage.Chunk - Chunk (sample-chunk-#0) init from completed file failed.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Enterprise.Library.Common.Storage.Chunk.ReadFooter(FileStream stream, BinaryReader reader) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 1007
+   at Enterprise.Library.Common.Storage.Chunk.InitCompleted() in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 199
+   at Enterprise.Library.Common.Storage.Chunk.FromCompletedFile(String filename, ChunkManager chunkManager, ChunkManagerConfig config, Boolean isMemoryChunk) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 141
+2018-02-27 17:38:49,934 ERROR Enterprise.Library.Common.Configurations.Configuration - Unhandled exception: System.NullReferenceException: Object reference not set to an instance of an object.
+   at Enterprise.Library.Common.Storage.Chunk.ReadFooter(FileStream stream, BinaryReader reader) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 1007
+   at Enterprise.Library.Common.Storage.Chunk.InitCompleted() in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 199
+   at Enterprise.Library.Common.Storage.Chunk.FromCompletedFile(String filename, ChunkManager chunkManager, ChunkManagerConfig config, Boolean isMemoryChunk) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 152
+   at Enterprise.Library.Common.Storage.ChunkManager.Load[T](Func`2 readRecordFunc) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\ChunkManager.cs:line 122
+   at StoragePerformanceTest.Program.WriteChunkPerformanceTest() in C:\Users\Administrator\Source\Repos\Enterprise.Library\test\Services\UnitTests\StoragePerformanceTest\Program.cs:line 67
+   at StoragePerformanceTest.Program.Main(String[] args) in C:\Users\Administrator\Source\Repos\Enterprise.Library\test\Services\UnitTests\StoragePerformanceTest\Program.cs:line 21
+2018-02-27 17:40:15,866 ERROR Enterprise.Library.Common.Storage.Chunk - Chunk (sample-chunk-#0) init from completed file failed.
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Enterprise.Library.Common.Storage.Chunk.ReadFooter(FileStream stream, BinaryReader reader) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 1007
+   at Enterprise.Library.Common.Storage.Chunk.InitCompleted() in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 199
+   at Enterprise.Library.Common.Storage.Chunk.FromCompletedFile(String filename, ChunkManager chunkManager, ChunkManagerConfig config, Boolean isMemoryChunk) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 141
+2018-02-27 17:40:15,966 ERROR Enterprise.Library.Common.Configurations.Configuration - Unhandled exception: System.NullReferenceException: Object reference not set to an instance of an object.
+   at Enterprise.Library.Common.Storage.Chunk.ReadFooter(FileStream stream, BinaryReader reader) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 1007
+   at Enterprise.Library.Common.Storage.Chunk.InitCompleted() in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 199
+   at Enterprise.Library.Common.Storage.Chunk.FromCompletedFile(String filename, ChunkManager chunkManager, ChunkManagerConfig config, Boolean isMemoryChunk) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\Chunk.cs:line 152
+   at Enterprise.Library.Common.Storage.ChunkManager.Load[T](Func`2 readRecordFunc) in C:\Users\Administrator\Source\Repos\Enterprise.Library\src\BuildingBlocks\Enterprise.Library.Common\Storage\ChunkManager.cs:line 122
+   at StoragePerformanceTest.Program.WriteChunkPerformanceTest() in C:\Users\Administrator\Source\Repos\Enterprise.Library\test\Services\UnitTests\StoragePerformanceTest\Program.cs:line 67
+   at StoragePerformanceTest.Program.Main(String[] args) in C:\Users\Administrator\Source\Repos\Enterprise.Library\test\Services\UnitTests\StoragePerformanceTest\Program.cs:line 21
