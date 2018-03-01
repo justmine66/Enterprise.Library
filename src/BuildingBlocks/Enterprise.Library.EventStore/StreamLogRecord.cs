@@ -39,7 +39,7 @@ namespace Enterprise.Library.EventStore
         public void WriteTo(long logPosition, BinaryWriter writer)
         {
             this.LogPosition = logPosition;
-            var streamId = StreamIdUtil.CreateStreamId(this.IPAddress, this.Port, this.LogPosition);
+            this.StreamId = StreamIdUtil.CreateStreamId(this.IPAddress, this.Port, this.LogPosition);
 
             writer.WriteLong(this.LogPosition)
                   .WriteString(this.StreamId)

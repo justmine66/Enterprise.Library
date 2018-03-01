@@ -5,7 +5,6 @@ using Enterprise.Library.Common.Storage.FileNamingStrategies;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace Enterprise.Library.EventStore
 {
@@ -29,17 +28,32 @@ namespace Enterprise.Library.EventStore
 
         public EventAppendStatus AppendStream(EventStream stream)
         {
-            throw new NotImplementedException();
+            lock (_lockObj)
+            {
+                var record = new StreamLogRecord(_ipaddress, _Port)
+                {
+                    SourceId = stream.SourceId,
+                    Name = stream.Name,
+                    Version = stream.Version,
+                    Events = stream.Events,
+                    CommandId = stream.CommandId,
+                    Timestamp = stream.Timestamp,
+                    Items = stream.Items
+                };
+                _chunkwriter.Write(record);
+                return EventAppendStatus.Success;
+            }
         }
 
         public EventAppendStatus AppendStreams(IEnumerable<EventStream> streams)
         {
-            throw new NotImplementedException();
+            //todo
+            return EventAppendStatus.Success;
         }
 
         public void Load()
         {
-            var path = @"c\estore-files\event-chunks";
+            var path = @"c:\estore-files\event-chunks";
             var chunkDataSize = 512 * 1024 * 1024;
             var maxLogRecordSize = 4 * 1024 * 1024;
             var config = new ChunkManagerConfig(

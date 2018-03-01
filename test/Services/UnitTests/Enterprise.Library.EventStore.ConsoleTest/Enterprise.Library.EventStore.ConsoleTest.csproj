@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Enterprise.Library.Common.Autofac" Version="1.0.0" />
+    <PackageReference Include="Enterprise.Library.Common.Log4NetLogging" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\BuildingBlocks\Enterprise.Library.EventStore\Enterprise.Library.EventStore.csproj" />
+  </ItemGroup>
+
+</Project>

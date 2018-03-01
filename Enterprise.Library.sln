@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enterprise.Library.Common.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enterprise.Library.EventStore", "src\BuildingBlocks\Enterprise.Library.EventStore\Enterprise.Library.EventStore.csproj", "{5BAFCCE8-ABE2-4AB6-A764-3B6810B668CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoragePerformanceTest", "test\Services\UnitTests\StoragePerformanceTest\StoragePerformanceTest.csproj", "{B39ED78D-4BEF-431F-840F-D37D960D9248}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoragePerformanceTest", "test\Services\UnitTests\StoragePerformanceTest\StoragePerformanceTest.csproj", "{B39ED78D-4BEF-431F-840F-D37D960D9248}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

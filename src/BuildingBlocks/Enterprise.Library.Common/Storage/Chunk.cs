@@ -15,7 +15,7 @@ namespace Enterprise.Library.Common.Storage
 {
     public unsafe class Chunk : IDisposable
     {
-        #region Private Variables
+        #region [ Private Variables ]
 
         private static readonly ILogger _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(Chunk));
 
@@ -42,21 +42,30 @@ namespace Enterprise.Library.Common.Storage
         private int _flushedDataPosition;
 
         private Chunk _memoryChunk;
-        private CacheItem[] _cacheItems;
-        private IntPtr _cachedData;//A pointer to the newly allocated memory.
-        private int _cachedLength;//The length of memory to use.
+        private CacheItem[] _cacheItems;//a ring array
+        private IntPtr _cachedData;//a pointer to the newly allocated memory.
+        private int _cachedLength;//the length of memory to use.
 
         private WriterWorkItem _writerWorkItem;
 
         #endregion
 
-        #region Public Properties
-
+        #region [ Public Properties ]
+        /// <summary>The absolute path on the disk for the file that the current chunk object will encapsulate.
+        /// </summary>
         public string FileName { get { return _filename; } }
+        /// <summary>The header of the current chunk.
+        /// </summary>
         public ChunkHeader ChunkHeader { get { return _chunkHeader; } }
+        /// <summary>The foorer of the current chunk.
+        /// </summary>
         public ChunkFooter ChunkFooter { get { return _chunkFooter; } }
+        /// <summary>The configuration information of the current chunk.
+        /// </summary>
         public ChunkManagerConfig Config { get { return _chunkConfig; } }
         public bool IsCompleted { get { return _isCompleted; } }
+        /// <summary>The last active time of the current chunk.
+        /// </summary>
         public DateTime LastActiveTime
         {
             get
@@ -69,6 +78,8 @@ namespace Enterprise.Library.Common.Storage
                 return lastActiveTimeOfMemoryChunk >= _lastActiveTime ? lastActiveTimeOfMemoryChunk : _lastActiveTime;
             }
         }
+        /// <summary>True if the current chunk will store directly to unmanaged memory, otherwise false.
+        /// </summary>
         public bool IsMemoryChunk { get { return _isMemoryChunk; } }
         public bool HasCachedChunk { get { return _memoryChunk != null; } }
         public int DataPosition { get { return _dataPosition; } }
@@ -86,8 +97,13 @@ namespace Enterprise.Library.Common.Storage
 
         #endregion
 
-        #region Constructors
-
+        #region [ Constructors ]
+        /// <summary>Initializes a new instance of <see cref="Chunk"/> class.
+        /// </summary>
+        /// <param name="filename">The absolute path on the disk for the file that the current chunk object will encapsulate.</param>
+        /// <param name="chunkManager">The manager of the current chunk.</param>
+        /// <param name="chunkConfig">The configuration information of the current chunk.</param>
+        /// <param name="isMemoryChunk">True if the current chunk will store directly to unmanaged memory, otherwise false.</param>
         private Chunk(string filename, ChunkManager chunkManager, ChunkManagerConfig chunkConfig, bool isMemoryChunk)
         {
             Ensure.NotNullOrEmpty(filename, "filename");
@@ -104,11 +120,17 @@ namespace Enterprise.Library.Common.Storage
         {
             UnCacheFromMemory();
         }
-
         #endregion
 
-        #region Factory Methods
-
+        #region [ Factory Methods ]
+        /// <summary>Initializes a new instance of <see cref="Chunk"/> class.
+        /// </summary>
+        /// <param name="filename">The absolute path on the disk for the file that the current chunk object will encapsulate.</param>
+        /// <param name="chunkNumber">The number of the current chunk</param>
+        /// <param name="chunkManager">The manager of the current chunk.</param>
+        /// <param name="config">The configuration information of the current chunk.</param>
+        /// <param name="isMemoryChunk">True if the current chunk will cache to unmanaged memory, otherwise false.</param>
+        /// <returns></returns>
         public static Chunk CreateNew(string filename, int chunkNumber, ChunkManager chunkManager, ChunkManagerConfig config, bool isMemoryChunk)
         {
             var chunk = new Chunk(filename, chunkManager, config, isMemoryChunk);
@@ -241,14 +263,14 @@ namespace Enterprise.Library.Common.Storage
 
             try
             {
-                if (_isMemoryChunk)
+                if (_isMemoryChunk)//memory mode
                 {
                     _cachedLength = fileSize;
                     _cachedData = Marshal.AllocHGlobal(_cachedLength);
                     writeStream = new UnmanagedMemoryStream((byte*)_cachedData, _cachedLength, _cachedLength, FileAccess.ReadWrite);
                     writeStream.Write(_chunkHeader.AsByteArray(), 0, ChunkHeader.Size);
                 }
-                else
+                else//file mode
                 {
                     var fileInfo = new FileInfo(_filename);
                     if (fileInfo.Exists)
@@ -744,7 +766,7 @@ namespace Enterprise.Library.Common.Storage
             {
                 if (!_isCompleted)
                 {
-                    Flush();
+                    this.Flush();
                 }
 
                 if (_writerWorkItem != null)
@@ -1116,7 +1138,7 @@ namespace Enterprise.Library.Common.Storage
             {
                 using (var reader = new BinaryReader(fileStream))
                 {
-                    chunkHeader = ReadHeader(fileStream, reader);
+                    chunkHeader = this.ReadHeader(fileStream, reader);
 
                     fileStream.Position = ChunkHeader.Size;
 
