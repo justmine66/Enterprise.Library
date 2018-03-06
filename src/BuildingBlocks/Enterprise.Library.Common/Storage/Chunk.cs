@@ -13,16 +13,17 @@ using System.Threading.Tasks;
 
 namespace Enterprise.Library.Common.Storage
 {
+    /// <summary>Represents a data chunk.
+    /// </summary>
     public unsafe class Chunk : IDisposable
     {
         #region [ Private Variables ]
-
         private static readonly ILogger _logger = ObjectContainer.Resolve<ILoggerFactory>().Create(typeof(Chunk));
 
         private ChunkHeader _chunkHeader;
         private ChunkFooter _chunkFooter;
 
-        private readonly string _filename;
+        private readonly string _filename;//the full qualified name of the current file chunk.
         private readonly ChunkManager _chunkManager;
         private readonly ChunkManagerConfig _chunkConfig;
         private readonly bool _isMemoryChunk;
@@ -33,21 +34,20 @@ namespace Enterprise.Library.Common.Storage
         private readonly object _freeMemoryObj = new object();
 
         private int _dataPosition;
+        private int _flushedDataPosition;
         private bool _isCompleted;
         private bool _isDestroying;
         private bool _isMemoryFreed;
         private int _cachingChunk;
         private DateTime _lastActiveTime;
         private bool _isReadersInitialized;
-        private int _flushedDataPosition;
 
         private Chunk _memoryChunk;
         private CacheItem[] _cacheItems;//a ring array
-        private IntPtr _cachedData;//a pointer to the newly allocated memory.
-        private int _cachedLength;//the length of memory to use.
+        private IntPtr _cachedData;//a pointer to the current memory chunk.
+        private int _cachedLength;//the length of the current memory chunk to use.
 
         private WriterWorkItem _writerWorkItem;
-
         #endregion
 
         #region [ Public Properties ]
@@ -60,7 +60,7 @@ namespace Enterprise.Library.Common.Storage
         /// <summary>The foorer of the current chunk.
         /// </summary>
         public ChunkFooter ChunkFooter { get { return _chunkFooter; } }
-        /// <summary>The configuration information of the current chunk.
+        /// <summary>The configuration options of the current chunk.
         /// </summary>
         public ChunkManagerConfig Config { get { return _chunkConfig; } }
         public bool IsCompleted { get { return _isCompleted; } }
@@ -102,7 +102,7 @@ namespace Enterprise.Library.Common.Storage
         /// </summary>
         /// <param name="filename">The absolute path on the disk for the file that the current chunk object will encapsulate.</param>
         /// <param name="chunkManager">The manager of the current chunk.</param>
-        /// <param name="chunkConfig">The configuration information of the current chunk.</param>
+        /// <param name="chunkConfig">The configuration options of the current chunk.</param>
         /// <param name="isMemoryChunk">True if the current chunk will store directly to unmanaged memory, otherwise false.</param>
         private Chunk(string filename, ChunkManager chunkManager, ChunkManagerConfig chunkConfig, bool isMemoryChunk)
         {
@@ -116,6 +116,9 @@ namespace Enterprise.Library.Common.Storage
             _isMemoryChunk = isMemoryChunk;
             _lastActiveTime = DateTime.Now;
         }
+        /// <summary>
+        /// Releases all unmanaged resources and optionally releases managed resource.
+        /// </summary>
         ~Chunk()
         {
             UnCacheFromMemory();
@@ -713,6 +716,8 @@ namespace Enterprise.Library.Common.Storage
 
             return RecordWriteResult.Successful(position);
         }
+        /// <summary>Clears all buffers for this chunk and causes all bufferd data to be written to the underling device.
+        /// </summary>
         public void Flush()
         {
             if (_isMemoryChunk || _isCompleted) return;
@@ -721,16 +726,18 @@ namespace Enterprise.Library.Common.Storage
                 Helper.EatException(() => _writerWorkItem.FlushToDisk());
             }
         }
+        /// <summary>Ensures the completeness of the current chunk.
+        /// </summary>
         public void Complete()
         {
-            lock (_writeSyncObj)
+            lock (_writeSyncObj)//等待写工作项完成
             {
                 if (_isCompleted) return;
 
-                _chunkFooter = WriteFooter();
+                _chunkFooter = this.WriteFooter();
                 if (!_isMemoryChunk)
                 {
-                    Flush();
+                    this.Flush();
                 }
 
                 _isCompleted = true;
@@ -756,41 +763,47 @@ namespace Enterprise.Library.Common.Storage
                 }
             }
         }
+        /// <summary>Releases all unmanaged resources used by the chunk and optionlly releases managed resources.
+        /// </summary>
         public void Dispose()
         {
-            Close();
+            this.Close();
         }
+        /// <summary>Closes the chunk and release related resouces.
+        /// </summary>
         public void Close()
         {
-            lock (_writeSyncObj)
+            lock (_writeSyncObj)//等待写工作项完成
             {
                 if (!_isCompleted)
                 {
-                    this.Flush();
+                    this.Flush();//对file chunk刷盘
                 }
 
-                if (_writerWorkItem != null)
+                if (_writerWorkItem != null)//释放写工作项
                 {
                     Helper.EatException(() => _writerWorkItem.Dispose());
                     _writerWorkItem = null;
                 }
 
-                if (!_isMemoryChunk)
+                if (!_isMemoryChunk)//释放环形数组
                 {
                     if (_cacheItems != null)
                     {
                         _cacheItems = null;
                     }
                 }
-                CloseAllReaderWorkItems();
-                FreeMemory();
+                this.CloseAllReaderWorkItems();//关闭所有读工作项
+                this.FreeMemory();//释放非托管内存
             }
         }
+        /// <summary>Destroys the chunk and release all related resouces.
+        /// </summary>
         public void Destroy()
         {
             if (_isMemoryChunk)
             {
-                FreeMemory();
+                this.FreeMemory();
                 return;
             }
 
@@ -809,16 +822,15 @@ namespace Enterprise.Library.Common.Storage
             }
 
             //释放缓存的内存
-            UnCacheFromMemory();
+            this.UnCacheFromMemory();
 
             //关闭所有的ReaderWorkItem
-            CloseAllReaderWorkItems();
+            this.CloseAllReaderWorkItems();
 
             //删除Chunk文件
             File.SetAttributes(_filename, FileAttributes.Normal);
             File.Delete(_filename);
         }
-
         #endregion
 
         #region Helper Methods
@@ -915,7 +927,7 @@ namespace Enterprise.Library.Common.Storage
         {
             for (var i = 0; i < _chunkConfig.ChunkReaderCount; i++)
             {
-                _readerWorkItemQueue.Enqueue(CreateReaderWorkItem());
+                _readerWorkItemQueue.Enqueue(this.CreateReaderWorkItem());
             }
             _isReadersInitialized = true;
         }
@@ -981,7 +993,7 @@ namespace Enterprise.Library.Common.Storage
             var currentTotalDataSize = DataPosition;
 
             //如果是固定大小的数据，则检查总数据大小是否正确
-            if (IsFixedDataSize())
+            if (this.IsFixedDataSize())
             {
                 if (currentTotalDataSize != _chunkHeader.ChunkDataTotalSize)
                 {
@@ -992,12 +1004,12 @@ namespace Enterprise.Library.Common.Storage
                 }
             }
 
-            var workItem = _writerWorkItem;
+            WriterWorkItem workItem = _writerWorkItem;
             var footer = new ChunkFooter(currentTotalDataSize);
 
             workItem.AppendData(footer.AsByteArray(), 0, ChunkFooter.Size);
 
-            Flush(); // trying to prevent bug with resized file, but no data in it
+            Flush(); // trying to prevent bug with resized file, but no data in it.
 
             var oldStreamLength = workItem.WorkingStream.Length;
             var newStreamLength = ChunkHeader.Size + currentTotalDataSize + ChunkFooter.Size;
@@ -1027,6 +1039,7 @@ namespace Enterprise.Library.Common.Storage
             stream.Seek(-ChunkFooter.Size, SeekOrigin.End);
             return ChunkFooter.FromStream(reader, stream);
         }
+
         private int GetChunkSize(ChunkHeader chunkHeader)
         {
             return ChunkHeader.Size + chunkHeader.ChunkDataTotalSize + ChunkFooter.Size;
@@ -1040,7 +1053,7 @@ namespace Enterprise.Library.Common.Storage
                 {
                     return default(T);
                 }
-                var currentDataPosition = DataPosition;
+                int currentDataPosition = this.DataPosition;
 
                 if (dataPosition + 2 * sizeof(int) > currentDataPosition)
                 {
@@ -1051,12 +1064,11 @@ namespace Enterprise.Library.Common.Storage
 
                 readerWorkItem.Stream.Position = GetStreamPosition(dataPosition);
 
-                var length = readerWorkItem.Reader.ReadInt32();
+                int length = readerWorkItem.Reader.ReadInt32();//prefix length
                 if (length <= 0)
                 {
                     throw new ChunkReadException(
-                        string.Format("Log record at data position {0} has non-positive length: {1} in chunk {2}",
-                                      dataPosition, length, this));
+                        string.Format("Log record at data position {0} has non-positive length: {1} in chunk {2}", dataPosition, length, this));
                 }
                 if (length > _chunkConfig.MaxLogRecordSize)
                 {
@@ -1072,20 +1084,18 @@ namespace Enterprise.Library.Common.Storage
                 }
 
                 var recordBuffer = readerWorkItem.Reader.ReadBytes(length);
-                var record = readRecordFunc(recordBuffer);
+                T record = readRecordFunc(recordBuffer);
                 if (record == null)
                 {
                     throw new ChunkReadException(
-                        string.Format("Cannot read a record from data position {0}. Something is seriously wrong in chunk {1}.",
-                                      dataPosition, this));
+                        string.Format("Cannot read a record from data position {0}. Something is seriously wrong in chunk {1}.",dataPosition, this));
                 }
 
                 int suffixLength = readerWorkItem.Reader.ReadInt32();
                 if (suffixLength != length)
                 {
                     throw new ChunkReadException(
-                        string.Format("Prefix/suffix length inconsistency: prefix length({0}) != suffix length ({1}), data position: {2}. Something is seriously wrong in chunk {3}.",
-                                      length, suffixLength, dataPosition, this));
+                        string.Format("Prefix/suffix length inconsistency: prefix length({0}) != suffix length ({1}), data position: {2}. Something is seriously wrong in chunk {3}.",length, suffixLength, dataPosition, this));
                 }
 
                 return record;
@@ -1099,20 +1109,19 @@ namespace Enterprise.Library.Common.Storage
                 {
                     return default(T);
                 }
-                var currentDataPosition = DataPosition;
+                int currentDataPosition = this.DataPosition;
 
                 if (dataPosition + _chunkConfig.ChunkDataUnitSize > currentDataPosition)
                 {
                     throw new ChunkReadException(
-                        string.Format("No enough space for fixed data record, data position: {0}, max data position: {1}, chunk: {2}",
-                                      dataPosition, currentDataPosition, this));
+                        string.Format("No enough space for fixed data record, data position: {0}, max data position: {1}, chunk: {2}",dataPosition, currentDataPosition, this));
                 }
 
-                var startStreamPosition = GetStreamPosition(dataPosition);
-                readerWorkItem.Stream.Position = startStreamPosition;
+                long startStreamPosition = GetStreamPosition(dataPosition);
+                readerWorkItem.Stream.Position = GetStreamPosition(dataPosition);
 
-                var recordBuffer = readerWorkItem.Reader.ReadBytes(_chunkConfig.ChunkDataUnitSize);
-                var record = readRecordFunc(recordBuffer);
+                byte[] recordBuffer = readerWorkItem.Reader.ReadBytes(_chunkConfig.ChunkDataUnitSize);
+                T record = readRecordFunc(recordBuffer);
                 if (record == null)
                 {
                     throw new ChunkReadException(
@@ -1120,7 +1129,7 @@ namespace Enterprise.Library.Common.Storage
                                           dataPosition, currentDataPosition, this));
                 }
 
-                var recordLength = readerWorkItem.Stream.Position - startStreamPosition;
+                long recordLength = readerWorkItem.Stream.Position - startStreamPosition;
                 if (recordLength != _chunkConfig.ChunkDataUnitSize)
                 {
                     throw new ChunkReadException(
@@ -1142,9 +1151,9 @@ namespace Enterprise.Library.Common.Storage
 
                     fileStream.Position = ChunkHeader.Size;
 
-                    var startStreamPosition = fileStream.Position;
-                    var maxStreamPosition = fileStream.Length - ChunkFooter.Size;
-                    var isFixedDataSize = IsFixedDataSize();
+                    long startStreamPosition = fileStream.Position;
+                    long maxStreamPosition = fileStream.Length - ChunkFooter.Size;
+                    bool isFixedDataSize = this.IsFixedDataSize();
 
                     while (fileStream.Position < maxStreamPosition)
                     {
@@ -1183,13 +1192,13 @@ namespace Enterprise.Library.Common.Storage
         {
             try
             {
-                var startStreamPosition = stream.Position;
+                long startStreamPosition = stream.Position;
                 if (startStreamPosition + 2 * sizeof(int) > maxStreamPosition)
                 {
                     return false;
                 }
 
-                var length = reader.ReadInt32();
+                int length = reader.ReadInt32();
                 if (length <= 0 || length > _chunkConfig.MaxLogRecordSize)
                 {
                     return false;
@@ -1199,8 +1208,8 @@ namespace Enterprise.Library.Common.Storage
                     return false;
                 }
 
-                var recordBuffer = reader.ReadBytes(length);
-                var record = readRecordFunc(recordBuffer);
+                byte[] recordBuffer = reader.ReadBytes(length);
+                T record = readRecordFunc(recordBuffer);
                 if (record == null)
                 {
                     return false;
@@ -1223,20 +1232,20 @@ namespace Enterprise.Library.Common.Storage
         {
             try
             {
-                var startStreamPosition = stream.Position;
+                long startStreamPosition = stream.Position;
                 if (startStreamPosition + _chunkConfig.ChunkDataUnitSize > maxStreamPosition)
                 {
                     return false;
                 }
 
-                var recordBuffer = reader.ReadBytes(_chunkConfig.ChunkDataUnitSize);
-                var record = readRecordFunc(recordBuffer);
+                byte[] recordBuffer = reader.ReadBytes(_chunkConfig.ChunkDataUnitSize);
+                T record = readRecordFunc(recordBuffer);
                 if (record == null)
                 {
                     return false;
                 }
 
-                var recordLength = stream.Position - startStreamPosition;
+                long recordLength = stream.Position - startStreamPosition;
                 if (recordLength != _chunkConfig.ChunkDataUnitSize)
                 {
                     _logger.ErrorFormat("Invalid fixed data length, expected length {0}, but was {1}", _chunkConfig.ChunkDataUnitSize, recordLength);
@@ -1250,6 +1259,7 @@ namespace Enterprise.Library.Common.Storage
                 return false;
             }
         }
+
         private static long GetStreamPosition(long dataPosition)
         {
             return ChunkHeader.Size + dataPosition;

@@ -30,7 +30,8 @@ namespace InfrastructureTest
             //Base64UrlTextEncoderTest.Test();
             //MessageLenghtTest.Test();
             //MemoryManageTest.Test();
-            TailRecursionOptimizationTest.Test();
+            //TailRecursionOptimizationTest.Test();
+            SpanTest.RefReturnTest();
         }
     }
 }
