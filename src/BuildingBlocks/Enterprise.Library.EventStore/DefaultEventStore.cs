@@ -8,13 +8,16 @@ using System.Net;
 
 namespace Enterprise.Library.EventStore
 {
+    /// <summary>
+    /// 事件存储的默认实现类
+    /// </summary>
     public class DefaultEventStore : IEventStore
     {
         private readonly object _lockObj = new object();
+        private readonly IPAddress _ipaddress = IPAddress.Loopback;
         private readonly ILogger _logger;
         private ChunkManager _chunkManager;
         private ChunkWriter _chunkwriter;
-        private IPAddress _ipaddress = IPAddress.Loopback;
         private int _Port = 10098;
         public DefaultEventStore()
         {
