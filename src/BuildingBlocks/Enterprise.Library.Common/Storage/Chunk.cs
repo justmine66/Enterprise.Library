@@ -44,8 +44,8 @@ namespace Enterprise.Library.Common.Storage
 
         private Chunk _memoryChunk;
         private CacheItem[] _cacheItems;//a ring array
-        private IntPtr _cachedData;//a pointer to the current memory chunk.
-        private int _cachedLength;//the length of the current memory chunk to use.
+        private IntPtr _cachedData;//a pointer to the current unmanaged memory chunk.
+        private int _cachedLength;//the length of the current unmanaged memory chunk to use.
 
         private WriterWorkItem _writerWorkItem;
         #endregion
