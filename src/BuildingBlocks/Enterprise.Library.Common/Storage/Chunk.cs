@@ -121,7 +121,7 @@ namespace Enterprise.Library.Common.Storage
         /// </summary>
         ~Chunk()
         {
-            UnCacheFromMemory();
+            this.UnCacheFromMemory();
         }
         #endregion
 
